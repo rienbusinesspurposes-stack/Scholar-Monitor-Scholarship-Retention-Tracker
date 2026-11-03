@@ -1,7 +1,4 @@
 <?php
-// Helpers for the JSON endpoints in each role's api/ folder (called from the page with fetch/AJAX).
-// Load config/database.php, includes/security.php and includes/functions.php first.
-
 function apiOut(int $status, array $data): never
 {
     http_response_code($status);
@@ -9,12 +6,9 @@ function apiOut(int $status, array $data): never
     echo json_encode($data, JSON_INVALID_UTF8_SUBSTITUTE) ?: '{"error":"Server error"}';
     exit;
 }
-
-// Start of every endpoint: answers in JSON only (never a redirect or an HTML error page) and returns the user.
-// A POST endpoint needs the CSRF token in the X-CSRF-Token header or a _csrf field.
 function apiBoot(array $roles, string $method = 'GET'): array
 {
-    ini_set('display_errors', '0'); // a PHP warning printed into the response would break the JSON
+    ini_set('display_errors', '0'); 
     set_exception_handler(function (Throwable $e): void {
         error_log('Scholar Monitor API error: ' . $e->getMessage());
         apiOut(500, ['error' => 'Server error']);
