@@ -1,4 +1,3 @@
-
 <?php
 // Shared helpers: roles, redirects, the logged-in user and the role guards.
 // Load config/database.php and includes/security.php first.
