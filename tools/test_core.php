@@ -76,6 +76,21 @@ try {
         check("$dir/.htaccess blocks web access", is_file($f) && str_contains(file_get_contents($f), 'Require all denied'));
     }
     check('.gitignore keeps config/local.php out of git', str_contains((string) @file_get_contents("$root/.gitignore"), 'config/local.php'));
+    
+    echo "-- Code files must print nothing\n";
+    // A blank line before the opening tag, an invisible byte-order mark or a closing tag sends output early and breaks sessions and redirects.
+    $noisy = [];
+    foreach (['config', 'includes', 'tools'] as $dir) {
+        foreach (glob("$root/$dir/*.php") as $file) {
+            foreach (token_get_all(file_get_contents($file)) as $token) {
+                if (is_array($token) && in_array($token[0], [T_INLINE_HTML, T_CLOSE_TAG], true)) {
+                    $noisy[] = "$dir/" . basename($file);
+                    break;
+                }
+            }
+        }
+    }
+    check('no PHP file in config, includes or tools prints anything by itself' . ($noisy ? ' (see: ' . implode(', ', $noisy) . ')' : ''), !$noisy);
 
     echo "-- Database structure\n";
     foreach (['users', 'login_attempts', 'login_confirmations', 'password_reset_tokens', 'security_audit_logs'] as $table) {
