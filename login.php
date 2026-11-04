@@ -1,6 +1,6 @@
 <?php
 // Step 1 of logging in: username or email plus password. A correct password emails a 6-digit code,
-// and login_verify.php finishes the login.
+// and login_verification.php finishes the login.
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/security.php';
 require_once __DIR__ . '/includes/functions.php';
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'last_send'  => time(),
                 ];
                 auditLog($id, 'login_code_sent');
-                redirect('login_verify.php');
+                redirect('login_verification.php');
             }
             auditLog($id, 'login_code_failed', 'the email could not be sent');
             $error = 'We could not send your login code. Please try again later.';
