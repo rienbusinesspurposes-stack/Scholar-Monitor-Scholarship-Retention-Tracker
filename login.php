@@ -81,5 +81,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p><label>Password <input type="password" name="password" maxlength="72" required autocomplete="current-password"></label></p>
         <p><button type="submit">Log in</button></p>
     </form>
+    <p><a href="register.php">Create an account</a> | <a href="forgot_password.php">Forgot your password?</a></p>
 </body>
 </html>
