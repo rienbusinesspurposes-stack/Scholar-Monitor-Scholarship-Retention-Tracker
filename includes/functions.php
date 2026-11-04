@@ -40,7 +40,15 @@ function isValidUsername(string $username): bool
     return (bool) preg_match('/^[A-Za-z0-9_.]{3,50}\z/', $username);
 }
 
-// Reads the account fresh from the database on every call, so a changed role or a deactivated account
+// Returns a message when the password is not acceptable, or null when it is fine. 72 bytes is the most bcrypt reads.
+function passwordProblem(string $password): ?string
+{
+    if (mb_strlen($password) < 10 || strlen($password) > 72) {
+        return 'The password must be 10 to 72 characters.';
+    }
+    return null;
+}
+
 // takes effect on the very next request. The login code stores the id in $_SESSION['user_id'].
 function currentUser(): ?array
 {
