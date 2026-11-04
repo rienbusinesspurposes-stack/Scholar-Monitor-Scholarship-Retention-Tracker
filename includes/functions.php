@@ -28,6 +28,20 @@ function appBaseUrl(): string
     return $base === '' ? '' : '/' . $base;
 }
 
+// Full web address of the site for links inside emails, e.g. https://scholarships.example.edu/app
+// Set app_url in config/local.php or SCHOLAR_APP_URL. It is never taken from the request on a real server,
+// because the Host header can be faked to poison reset links. On localhost it is worked out automatically.
+function appUrl(): string
+{
+    $local = is_file(__DIR__ . '/../config/local.php') ? require __DIR__ . '/../config/local.php' : [];
+    $url = trim((string) ($local['app_url'] ?? (getenv('SCHOLAR_APP_URL') ?: '')));
+    if ($url === '' && preg_match('/^(localhost|127\.0\.0\.1)(:\d+)?\z/', $_SERVER['HTTP_HOST'] ?? '')) {
+        $scheme = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http';
+        $url = $scheme . '://' . $_SERVER['HTTP_HOST'] . appBaseUrl();
+    }
+    return preg_match('#^https?://#i', $url) ? rtrim($url, '/') : '';
+}
+
 // Internal paths only: the leading slashes are stripped so the target can never leave this site.
 function redirect(string $path): never
 {
@@ -49,6 +63,7 @@ function passwordProblem(string $password): ?string
     return null;
 }
 
+// Reads the account fresh from the database on every call, so a changed role or a deactivated account
 // takes effect on the very next request. The login code stores the id in $_SESSION['user_id'].
 function currentUser(): ?array
 {
