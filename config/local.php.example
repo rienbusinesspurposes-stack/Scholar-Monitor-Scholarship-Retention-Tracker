@@ -14,5 +14,4 @@ return [
     'mail_from_email' => 'your-sending-account@example.com',
     'mail_from_name' => 'Scholar Monitor',
     'app_url' => 'http://localhost/Final_Project',
-    'pass' => '',
 ];
