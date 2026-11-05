@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteRule ^index\.html$ dashboard.php [R=302,L]
+RewriteRule ^(scholarship|academics-record|documents|deadlines|notifications)\.html$ $1.php [R=302,L]
