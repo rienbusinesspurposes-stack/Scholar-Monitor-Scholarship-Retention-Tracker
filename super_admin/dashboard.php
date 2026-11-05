@@ -1,0 +1,6 @@
+<?php
+require_once __DIR__.'/../config/database.php';
+require_once __DIR__.'/../includes/security.php';
+require_once __DIR__.'/../includes/functions.php';
+require_once __DIR__.'/../includes/portal.php';
+requireRole(['SuperAdmin']);$stats=['Users'=>(int)$pdo->query('SELECT COUNT(*) FROM users')->fetchColumn(),'Admins'=>(int)$pdo->query("SELECT COUNT(*) FROM users WHERE role='Admin'")->fetchColumn(),'Programs'=>(int)$pdo->query('SELECT COUNT(*) FROM scholarship_programs')->fetchColumn(),'Scholars'=>(int)$pdo->query('SELECT COUNT(*) FROM scholars')->fetchColumn()];portalStart('Super Admin Dashboard','dashboard.php');echo '<div class="portal-grid">';foreach($stats as $k=>$v)echo '<article class="portal-stat"><span>'.h($k).'</span><strong>'.$v.'</strong></article>';echo '</div><div class="portal-panel"><a class="portal-button" href="users.php">Manage users</a> <a class="portal-button" href="programs.php">Programs</a> <a class="portal-button" href="audit.php">Audit logs</a></div>';portalEnd();
