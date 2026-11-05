@@ -1,0 +1,6 @@
+<?php
+require_once __DIR__.'/../config/database.php';
+require_once __DIR__.'/../includes/security.php';
+require_once __DIR__.'/../includes/functions.php';
+require_once __DIR__.'/../includes/portal.php';
+requireRole(['Admin']);$stats=['Scholars'=>(int)$pdo->query('SELECT COUNT(*) FROM scholars')->fetchColumn(),'Programs'=>(int)$pdo->query('SELECT COUNT(*) FROM scholarship_programs WHERE is_active=1')->fetchColumn(),'At risk'=>(int)$pdo->query("SELECT COUNT(*) FROM scholars WHERE status='AtRisk'")->fetchColumn(),'Documents to review'=>(int)$pdo->query("SELECT COUNT(*) FROM scholar_documents WHERE status='Submitted'")->fetchColumn()];portalStart('Admin Dashboard','dashboard.php');echo '<div class="portal-grid">';foreach($stats as $k=>$v)echo '<article class="portal-stat"><span>'.h($k).'</span><strong>'.$v.'</strong></article>';echo '</div><div class="portal-panel"><h2>Manage scholarship operations</h2><div class="portal-actions"><a class="portal-button" href="scholars.php">Scholars</a><a class="portal-button" href="programs.php">Programs</a><a class="portal-button" href="grades.php">Grades</a><a class="portal-button" href="documents.php">Document review</a></div></div>';portalEnd();
