@@ -48,6 +48,7 @@ try {
  if($action==='assign_scholar' && $role==='Admin'){
   $uid=(int)($_POST['user_id']??0);$pid=(int)($_POST['program_id']??0);$number=trim((string)($_POST['student_number']??''));
   if($uid<1||$pid<1||$number===''||mb_strlen($number)>30)$go('Complete all scholar details.');
+  $check=$pdo->prepare("SELECT u.id FROM users u JOIN scholarship_programs p ON p.id=? WHERE u.id=? AND u.role='User' AND u.is_active=1 AND p.is_active=1");$check->execute([$pid,$uid]);if(!$check->fetch())$go('Choose an active student account and active scholarship program.');
   $q=$pdo->prepare("INSERT INTO scholars(user_id,program_id,student_number,status,verified_by,verified_at) VALUES(?,?,?,'Active',?,NOW())");$q->execute([$uid,$pid,$number,$user['id']]);
   auditLog((int)$user['id'],'scholar_assigned',"user $uid, program $pid");$go('Scholar account assigned.');
  }
