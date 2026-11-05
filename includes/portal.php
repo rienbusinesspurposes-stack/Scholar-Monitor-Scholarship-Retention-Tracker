@@ -7,7 +7,7 @@ function portalStart(string $title, string $section): void {
     $role = $portalUser['role'];
     $base = '../assets/';
     $nav = $role === 'User'
-        ? [['dashboard.php','Dashboard','⌂'],['scholarship.php','My Scholarship','🎖'],['academics-record.php','Academic Records','▤'],['documents.php','My Documents','▧'],['deadlines.php','Deadlines','◷'],['notifications.php','Notifications','♢']]
+        ? [['dashboard.php','Dashboard','⌂'],['scholarship.php','My Scholarship','🎖'],['academics-record.php','Academic Records','▤'],['documents.php','My Documents','▧'],['deadlines.php','Deadlines','◷'],['notifications.php','Notifications','♢'],['profile.php','My Profile','♙']]
         : ($role === 'Admin'
             ? [['dashboard.php','Dashboard','⌂'],['scholars.php','Scholars','♙'],['programs.php','Scholarship Programs','🎖'],['grades.php','Academic Records','▤'],['documents.php','Document Review','▧']]
             : [['dashboard.php','Dashboard','⌂'],['users.php','User Management','♙'],['programs.php','Scholarship Programs','🎖'],['audit.php','Audit Logs','▤']]);
