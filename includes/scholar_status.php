@@ -24,7 +24,7 @@ function refreshScholarStatus(int $scholarId, ?int $actorId = null): ?string
     global $pdo;
     $stmt = $pdo->prepare(
         'SELECT s.status, p.min_grade, p.warning_margin,
-                (SELECT g.average FROM grade_records g WHERE g.scholar_id = s.id ORDER BY g.id DESC LIMIT 1) AS latest
+                (SELECT g.average FROM grade_records g WHERE g.scholar_id = s.id ORDER BY g.created_at DESC, g.id DESC LIMIT 1) AS latest
          FROM scholars s JOIN scholarship_programs p ON p.id = s.program_id
          WHERE s.id = ?'
     );
