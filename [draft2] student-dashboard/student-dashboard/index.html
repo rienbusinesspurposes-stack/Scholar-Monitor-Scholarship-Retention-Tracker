@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | GranTrack</title>
+
+    <!-- Session guard: must load first so it can redirect before the page shows -->
+    <script src="assets/js/auth.js"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Styles (load order: theme > base > layout > components) -->
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/layout.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <!-- ================= SIDEBAR ================= -->
+        <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+
+            <div class="sidebar-brand">
+                <img src="assets/images/grantrack-login-logo-white.png" alt="GranTrack logo" class="brand-logo">
+
+                <div class="brand-info">
+                    <h2>GranTrack</h2>
+                    <p>"Bantay Grant, Gabay sa Pangarap"</p>
+                </div>
+            </div>
+
+            <nav class="sidebar-navigation" aria-label="Student pages">
+
+                <p class="nav-heading">MAIN MENU</p>
+
+                <ul class="nav-list">
+                    <li>
+                        <a href="index.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🏠︎</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="scholarship.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🎖</span>
+                            <span>My Scholarship</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="academics-record.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🗒</span>
+                            <span>Academic Records</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="documents.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">✉</span>
+                            <span>My Documents</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="notifications.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🛎</span>
+                            <span>Notifications</span>
+                            <span class="notification-count" aria-label="2 unread">2</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="deadlines.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🗓</span>
+                            <span>Deadlines</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <p class="nav-heading account-heading">ACCOUNT</p>
+
+                <ul class="nav-list">
+                    <li>
+                        <a href="profile.php" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">👤</span>
+                            <span>My Profile</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="#" class="logout-link" id="logout-button">
+                    <span aria-hidden="true">➜]</span>
+                    <span>Log Out</span>
+                </a>
+
+                <div class="sidebar-version">
+                    <p>© <span data-year></span> MCC GranTrack</p>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- Dims the page when the mobile drawer is open -->
+        <div class="sidebar-backdrop" aria-hidden="true"></div>
+
+
+        <!-- ================= MAIN CONTENT ================= -->
+        <main class="main-content">
+
+            <header class="top-header">
+
+                <div class="header-left">
+                    <button type="button"
+                            class="menu-toggle"
+                            aria-label="Open navigation menu"
+                            aria-controls="sidebar"
+                            aria-expanded="false">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+
+                    <div class="header-title">
+                        <h2>Student Portal</h2>
+                        <p>GranTrack: Scholarship Management System</p>
+                    </div>
+                </div>
+
+                <div class="header-actions">
+
+                    <a href="notifications.php"
+                       class="header-notification"
+                       aria-label="View notifications">
+                        🔔
+                        <span class="notification-dot"></span>
+                    </a>
+
+                    <div class="student-account">
+                        <div class="student-avatar" aria-hidden="true">?</div>
+
+                        <div class="student-details">
+                            <strong>Student Name</strong>
+                            <span>Student Number</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <section class="dashboard-content">
+
+                <!-- Welcome -->
+                <section class="welcome-section">
+
+                    <div>
+                        <p class="section-label">STUDENT DASHBOARD</p>
+                        <h1 id="welcome-message"></h1>
+                        <p>
+                            Here's an overview of your scholarship
+                            information and current requirements.
+                        </p>
+                    </div>
+
+                    <div class="academic-year">
+                        <span>ACADEMIC YEAR</span>
+                        <strong>2026–2027</strong>
+                    </div>
+
+                </section>
+
+
+                <!-- Summary cards -->
+                <section class="summary-section">
+
+                    <h2 class="section-title">Scholarship Overview</h2>
+
+                    <div class="summary-grid" >
+                        
+                        
+                        <article class="summary-card">
+                            <div class="card-header">
+                                <span class="card-label">Scholarship Status</span>
+                                <span class="card-icon" aria-hidden="true">🎖</span>
+                            </div>
+                            <h2><span class="status-active">Active</span></h2>
+                            <p>Your scholarship is currently active.</p>
+                        </article>
+                        
+                        <article class="summary-card">
+                            <div class="card-header">
+                                <span class="card-label">Current GWA</span>
+                                <span class="card-icon" aria-hidden="true">🕮</span>
+                            </div>
+                            <h3>94.80</h3>
+                            <p>Latest recorded academic performance.</p>
+                        </article>
+
+                        <article class="summary-card">
+                            <div class="card-header">
+                                <span class="card-label">Missing Documents</span>
+                                <span class="card-icon" aria-hidden="true">🗎</span>
+                            </div>
+                            <h3><span class="status-warning">1</span></h3>
+                            <p>Document requiring your attention.</p>
+                            <a href="documents.php" class="card-link">View documents →</a>
+                        </article>
+
+                        <article class="summary-card">
+                            <div class="card-header">
+                                <span class="card-label">Upcoming Deadlines</span>
+                                <span class="card-icon" aria-hidden="true">◷</span>
+                            </div>
+                            <h3>2</h3>
+                            <p>Requirements with upcoming due dates.</p>
+                            <a href="deadlines.php" class="card-link">View deadlines →</a>
+                        </article>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Alerts + deadlines -->
+                <div class="dashboard-grid">
+
+                    <section class="content-panel">
+
+                        <div class="panel-header">
+                            <div>
+                                <h2>Recent Alerts</h2>
+                                <p>Important scholarship notifications</p>
+                            </div>
+                            <a href="notifications.php">View All</a>
+                        </div>
+
+                        <article class="alert-item">
+                            <div class="alert-icon warning-icon" aria-hidden="true">!</div>
+                            <div class="alert-details">
+                                <h3>Missing Document</h3>
+                                <p>Your enrollment form has not yet been submitted.</p>
+                                <span>October 31, 2026</span>
+                            </div>
+                            <span class="alert-status pending">Pending</span>
+                        </article>
+
+                        <article class="alert-item">
+                            <div class="alert-icon info-icon" aria-hidden="true">i</div>
+                            <div class="alert-details">
+                                <h3>Academic Records Updated</h3>
+                                <p>Your latest academic records are now available.</p>
+                                <span>October 29, 2026</span>
+                            </div>
+                            <span class="alert-status new">New</span>
+                        </article>
+
+                    </section>
+
+                    <section class="content-panel">
+
+                        <div class="panel-header">
+                            <div>
+                                <h2>Next Deadlines</h2>
+                                <p>Upcoming scholarship requirements</p>
+                            </div>
+                            <a href="deadlines.php">View All</a>
+                        </div>
+
+                        <article class="deadline-item">
+                            <div class="deadline-date">
+                                <strong>05</strong>
+                                <span>NOV</span>
+                            </div>
+                            <div class="deadline-details">
+                                <h3>Enrollment Form</h3>
+                                <p>Required document</p>
+                                <span class="deadline-warning">Due soon</span>
+                            </div>
+                        </article>
+
+                        <article class="deadline-item">
+                            <div class="deadline-date">
+                                <strong>15</strong>
+                                <span>NOV</span>
+                            </div>
+                            <div class="deadline-details">
+                                <h3>Grade Submission</h3>
+                                <p>Academic requirement</p>
+                                <span class="deadline-normal">Upcoming</span>
+                            </div>
+                        </article>
+
+                    </section>
+
+                </div>
+
+
+                <!-- Reminder -->
+                <section class="reminder-panel">
+
+                    <div class="reminder-content">
+                        <h2>Scholarship Reminder</h2>
+                        <p>
+                            Maintain your academic performance and submit all
+                            required documents on time to remain eligible for
+                            your scholarship.
+                        </p>
+                    </div>
+
+                    <a href="scholarship.php" class="reminder-link">
+                        View Scholarship Details →
+                    </a>
+
+                </section>
+
+            </section>
+
+
+            <footer class="main-footer">
+                <p>© <span data-year></span> MCC GranTrack</p>
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <!-- Logout confirmation modal -->
+    <div class="modal-overlay" id="logout-modal" role="dialog" aria-modal="true"
+         aria-labelledby="logout-title" aria-hidden="true">
+        <div class="modal-box">
+
+            <button type="button" class="modal-close" id="close-logout-modal"
+                    aria-label="Close">&times;</button>
+
+            <div class="logout-modal-icon" aria-hidden="true">➜]</div>
+
+            <h2 id="logout-title">Logging Out?</h2>
+
+            <p>Are you sure you want to log out of your MCC GranTrack account?</p>
+
+            <div class="logout-modal-actions">
+                <button type="button" class="cancel-button" id="cancel-logout">Cancel</button>
+                <button type="button" class="confirm-logout-button" id="confirm-logout">Yes, Log Out</button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Scripts -->
+    <script src="assets/js/nav.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+
+</body>
+
+</html>
