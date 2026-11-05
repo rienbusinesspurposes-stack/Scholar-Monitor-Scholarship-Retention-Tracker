@@ -1,0 +1,6 @@
+<?php
+require_once __DIR__.'/../config/database.php';
+require_once __DIR__.'/../includes/security.php';
+require_once __DIR__.'/../includes/functions.php';
+require_once __DIR__.'/../includes/portal.php';
+$q=$pdo->prepare('SELECT s.student_number,s.status,s.verified_at,p.name,p.description,p.min_grade,p.warning_margin FROM scholars s JOIN scholarship_programs p ON p.id=s.program_id WHERE s.user_id=?');$q->execute([$portalUser['id']]);$s=$q->fetch();portalStart('My Scholarship','scholarship.php');if($s){echo '<div class="portal-panel"><h2>'.h($s['name']).'</h2><p>'.h($s['description']).'</p><div class="portal-grid"><article class="portal-stat"><span>Status</span><strong>'.h($s['status']).'</strong></article><article class="portal-stat"><span>Student number</span><strong>'.h($s['student_number']).'</strong></article><article class="portal-stat"><span>Minimum grade</span><strong>'.h($s['min_grade']).'</strong></article><article class="portal-stat"><span>Warning margin</span><strong>'.h($s['warning_margin']).'</strong></article></div></div>';}else portalNotice('No scholarship assignment has been linked to your account.');portalEnd();
