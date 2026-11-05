@@ -41,7 +41,7 @@ try {
  }
  if($action==='create_requirement' && in_array($role,['Admin','SuperAdmin'],true)){
   $pid=(int)($_POST['program_id']??0);$name=trim((string)($_POST['name']??''));$description=trim((string)($_POST['description']??''));$due=trim((string)($_POST['due_date']??''));
-  if($pid<1||$name===''||mb_strlen($name)>150||($due!==''&&!preg_match('/^\\d{4}-\\d{2}-\\d{2}$/',$due)))$go('Enter a valid program, requirement name and due date.');
+  if($pid<1||$name===''||mb_strlen($name)>150||($due!==''&&!preg_match('/^\d{4}-\d{2}-\d{2}$/',$due)))$go('Enter a valid program, requirement name and due date.');
   $q=$pdo->prepare('INSERT INTO document_requirements(program_id,name,description,due_date) VALUES(?,?,?,?)');$q->execute([$pid,$name,$description?:null,$due?:null]);
   auditLog((int)$user['id'],'requirement_created',$name);$go('Document requirement created.');
  }
