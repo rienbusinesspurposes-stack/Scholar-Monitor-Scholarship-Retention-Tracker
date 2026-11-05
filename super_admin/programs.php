@@ -1,0 +1,6 @@
+<?php
+require_once __DIR__.'/../config/database.php';
+require_once __DIR__.'/../includes/security.php';
+require_once __DIR__.'/../includes/functions.php';
+require_once __DIR__.'/../includes/portal.php';
+requireRole(['SuperAdmin']);$q=$pdo->query('SELECT name,min_grade,warning_margin,is_active FROM scholarship_programs ORDER BY name');$rows=[];foreach($q->fetchAll() as $r)$rows[]=[h($r['name']),h($r['min_grade']),h($r['warning_margin']),$r['is_active']?'Active':'Inactive'];portalStart('Scholarship Programs','programs.php');echo '<div class="portal-panel"><h2>Create program</h2><form class="portal-form" method="post" action="../portal_action.php">'.csrf_field().'<input type="hidden" name="action" value="create_program"><input type="hidden" name="back" value="programs.php"><label>Name<input name="name" required></label><label>Minimum grade<input type="number" name="min_grade" min="0" max="100" step=".01" required></label><label>Warning margin<input type="number" name="warning_margin" min="0" max="100" step=".01" value="3" required></label><button class="portal-button">Create</button></form></div>';portalTable(['Program','Minimum','Margin','Status'],$rows);portalEnd();
