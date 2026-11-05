@@ -8,11 +8,16 @@ enforceCsrfOnPost();
 $role = $user['role'];
 $action = (string)($_POST['action'] ?? '');
 $back = (string)($_POST['back'] ?? 'index.php');
-$allowedBack = ['dashboard.php','scholars.php','programs.php','grades.php','documents.php','notifications.php','users.php'];
+$allowedBack = ['dashboard.php','scholars.php','programs.php','grades.php','documents.php','notifications.php','users.php','profile.php'];
 if (!in_array($back,$allowedBack,true)) $back='index.php';
 $folder = $role === 'User' ? 'user' : ($role === 'Admin' ? 'admin' : 'super_admin');
 $go = function(string $message) use ($folder,$back) { $_SESSION['portal_flash']=$message; redirect($folder.'/'.$back); };
 try {
+ if($action==='update_profile' && $role==='User'){
+  $name=trim((string)($_POST['full_name']??''));
+  if($name===''||mb_strlen($name)>150||!mb_check_encoding($name,'UTF-8')||preg_match('/\p{C}/u',$name))$go('Enter a valid full name up to 150 characters.');
+  $q=$pdo->prepare('UPDATE users SET full_name=? WHERE id=?');$q->execute([$name,$user['id']]);auditLog((int)$user['id'],'profile_updated');$go('Your profile was updated.');
+ }
  if ($action==='mark_notification' && $role==='User') {
   $id=(int)($_POST['id']??0); $q=$pdo->prepare('UPDATE notifications SET read_at=NOW() WHERE id=? AND user_id=?'); $q->execute([$id,$user['id']]); $go('Notification marked as read.');
  }
