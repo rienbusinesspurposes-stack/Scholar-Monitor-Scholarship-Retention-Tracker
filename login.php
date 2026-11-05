@@ -62,25 +62,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Log in - Scholar Monitor</title>
-</head>
-<body>
-    <h1>Scholar Monitor</h1>
-    <?php if ($error !== ''): ?>
-        <p role="alert"><?= htmlspecialchars($error, ENT_QUOTES) ?></p>
-    <?php endif; ?>
-    <form method="post">
-        <?= csrf_field() ?>
-        <p><label>Username or email <input type="text" name="identifier" value="<?= htmlspecialchars($identifier, ENT_QUOTES) ?>" maxlength="255" required autocomplete="username"></label></p>
-        <p><label>Password <input type="password" name="password" maxlength="72" required autocomplete="current-password"></label></p>
-        <p><button type="submit">Log in</button></p>
-    </form>
-    <p><a href="register.php">Create an account</a> | <a href="forgot_password.php">Forgot your password?</a></p>
-</body>
-</html>
+?><!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sign In | MCC GranTrack</title><link rel="stylesheet" href="assets/css/login.css"><link rel="stylesheet" href="assets/css/theme.css"></head>
+<body><main class="login-container"><section class="login-brand"><img src="assets/images/grantrack-login-logo-white.png" alt="GranTrack" class="login-logo"><h1>MCC GranTrack</h1><p class="brand-tagline">Bantay Grant, Gabay sa Pangarap.</p><div class="brand-message"><h2>Your Scholarship Journey Starts Here!</h2><p>Monitor your academic progress, track scholarship requirements, and stay updated with important alerts.</p></div><p class="brand-footer">MCC Scholarship Monitoring System</p></section><section class="login-section"><div class="login-card"><div class="login-heading"><span class="welcome-label">WELCOME BACK!</span><h2>Sign in to your account</h2><p>Enter your username or school email and password.</p></div><?php if ($error !== ''): ?><p class="login-error" role="alert"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?><form method="post" action="login.php"><?= csrf_field() ?><div class="form-group"><label for="identifier">Username or Email</label><input id="identifier" type="text" name="identifier" value="<?= htmlspecialchars($identifier, ENT_QUOTES, 'UTF-8') ?>" maxlength="255" placeholder="Enter your username or email" autocomplete="username" required></div><div class="form-group"><label for="password">Password</label><input id="password" type="password" name="password" maxlength="72" placeholder="Enter your password" autocomplete="current-password" required></div><div class="login-options"><a href="forgot_password.php">Forgot password?</a></div><button class="login-button" type="submit">Sign In</button></form><div class="login-divider"><span>SECURE STUDENT PORTAL</span></div><p class="login-help">New student? <a href="register.php">Create an account</a></p></div><footer class="login-footer">© <?= date('Y') ?> MCC GranTrack. All Rights Reserved.</footer></section></main></body></html>
