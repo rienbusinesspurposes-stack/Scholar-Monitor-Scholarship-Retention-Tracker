@@ -4,3 +4,4 @@ config/local.php
 
 /uploads/documents/*
 !/uploads/documents/.htaccess
+/sql_local/
