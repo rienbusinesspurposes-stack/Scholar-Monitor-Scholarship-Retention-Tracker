@@ -136,8 +136,7 @@
 
         if (confirmButton) {
             confirmButton.addEventListener("click", function () {
-                window.GranTrackSession.end();
-                window.location.replace("login.html");
+                document.getElementById("logout-form").submit();
             });
         }
 
