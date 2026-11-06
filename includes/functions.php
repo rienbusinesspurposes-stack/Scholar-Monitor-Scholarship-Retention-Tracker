@@ -23,7 +23,7 @@ function appBaseUrl(): string
         return ''; // shortcut: scripts reached through a symlink fall back to the web root, upgrade if that is ever used
     }
     $depth = substr_count(substr($script, strlen($root) + 1), '/');
-    $dirs  = explode('/', trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
+    $dirs  = explode('/', trim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/')); // Windows dirname() can return backslashes
     $base  = implode('/', array_filter(array_slice($dirs, 0, max(0, count($dirs) - $depth)), 'strlen'));
     return $base === '' ? '' : '/' . $base;
 }
