@@ -66,21 +66,131 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Log in - Scholar Monitor</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | MCC GranTrack</title>
+
+    <link rel="stylesheet" href="assets/css/login.css">
 </head>
+
 <body>
-    <h1>Scholar Monitor</h1>
-    <?php if ($error !== ''): ?>
-        <p role="alert"><?= htmlspecialchars($error, ENT_QUOTES) ?></p>
-    <?php endif; ?>
-    <form method="post">
-        <?= csrf_field() ?>
-        <p><label>Username or email <input type="text" name="identifier" value="<?= htmlspecialchars($identifier, ENT_QUOTES) ?>" maxlength="255" required autocomplete="username"></label></p>
-        <p><label>Password <input type="password" name="password" maxlength="72" required autocomplete="current-password"></label></p>
-        <p><button type="submit">Log in</button></p>
-    </form>
-    <p><a href="register.php">Create an account</a> | <a href="forgot_password.php">Forgot your password?</a></p>
+
+    <main class="login-container">
+
+        <!-- Left Branding Section -->
+        <section class="login-brand">
+            <img src="assets/images/grantrack-login-logo-white.png"
+                 alt="GranTrack Logo"
+                 class="login-logo">
+
+            <h1>MCC GranTrack</h1>
+
+            <p class="brand-tagline">
+                Bantay Grant, Gabay sa Pangarap.
+            </p>
+
+            <div class="brand-message">
+                <h2>Your Scholarship Journey Starts Here!</h2>
+                <p>
+                    Monitor your academic progress, track scholarship
+                    requirements, and stay updated with important alerts.
+                </p>
+            </div>
+
+            <p class="brand-footer">
+                MCC Scholarship Monitoring System
+            </p>
+        </section>
+
+
+        <!-- Right Login Section -->
+        <section class="login-section">
+
+            <div class="login-card">
+
+                <div class="mobile-brand">
+                    <img src="assets/images/grantrack-login-logo-white.png"
+                         alt="GranTrack Logo">
+                </div>
+
+                <div class="login-heading">
+                    <span class="welcome-label">WELCOME BACK!</span>
+                    <h2>Sign in to your account</h2>
+                    <p>Enter your account details to continue.</p>
+                </div>
+
+                <form id="login-form" method="post">
+                    <?= csrf_field() ?>
+
+                    <div class="form-group">
+                        <label for="identifier">Username or email</label>
+
+                        <input
+                            type="text"
+                            id="identifier"
+                            name="identifier"
+                            value="<?= htmlspecialchars($identifier, ENT_QUOTES) ?>"
+                            placeholder="Enter your username or email"
+                            maxlength="255"
+                            autocomplete="username"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+
+                        <div class="password-wrapper">
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Enter your password"
+                                maxlength="72"
+                                autocomplete="current-password"
+                                required>
+
+                            <button
+                                type="button"
+                                id="toggle-password"
+                                class="password-toggle">
+                                Show
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="login-options">
+                        <a href="forgot_password.php">Forgot password?</a>
+                    </div>
+
+                    <p id="login-error" class="login-error" role="alert"><?= htmlspecialchars($error, ENT_QUOTES) ?></p>
+
+                    <button type="submit" class="login-button">
+                        Sign In
+                    </button>
+
+                </form>
+
+                <div class="login-divider">
+                    <span>STUDENT PORTAL</span>
+                </div>
+
+                <p class="login-help">
+                    No account yet?
+                    <a href="register.php">Create an account</a>
+                </p>
+
+            </div>
+
+            <footer class="login-footer">
+                © <span id="login-year"></span> MCC GranTrack.
+                All Rights Reserved.
+            </footer>
+
+        </section>
+
+    </main>
+
+    <script src="assets/js/login.js"></script>
+
 </body>
 </html>

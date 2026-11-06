@@ -65,25 +65,111 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Enter your code - Scholar Monitor</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter your code | MCC GranTrack</title>
+
+    <link rel="stylesheet" href="assets/css/login.css">
 </head>
+
 <body>
-    <h1>Check your email</h1>
-    <p>We sent a 6-digit code to the email address on your account. It expires in <?= LOGIN_CODE_MINUTES ?> minutes.</p>
-    <?php if ($error !== ''): ?>
-        <p role="alert"><?= htmlspecialchars($error, ENT_QUOTES) ?></p>
-    <?php endif; ?>
-    <form method="post">
-        <?= csrf_field() ?>
-        <p><label>Code <input type="text" name="code" inputmode="numeric" pattern="[0-9 ]*" maxlength="12" required autocomplete="one-time-code"></label></p>
-        <p><button type="submit">Log in</button></p>
-    </form>
-    <form method="post">
-        <?= csrf_field() ?>
-        <p><button type="submit" name="resend" value="1">Send a new code</button></p>
-    </form>
-    <p><a href="login.php">Start over</a></p>
+
+    <main class="login-container">
+
+        <!-- Left Branding Section -->
+        <section class="login-brand">
+            <img src="assets/images/grantrack-login-logo-white.png"
+                 alt="GranTrack Logo"
+                 class="login-logo">
+
+            <h1>MCC GranTrack</h1>
+
+            <p class="brand-tagline">
+                Bantay Grant, Gabay sa Pangarap.
+            </p>
+
+            <div class="brand-message">
+                <h2>Your Scholarship Journey Starts Here!</h2>
+                <p>
+                    Monitor your academic progress, track scholarship
+                    requirements, and stay updated with important alerts.
+                </p>
+            </div>
+
+            <p class="brand-footer">
+                MCC Scholarship Monitoring System
+            </p>
+        </section>
+
+
+        <!-- Right Code Section -->
+        <section class="login-section">
+
+            <div class="login-card">
+
+                <div class="mobile-brand">
+                    <img src="assets/images/grantrack-login-logo-white.png"
+                         alt="GranTrack Logo">
+                </div>
+
+                <div class="login-heading">
+                    <span class="welcome-label">ALMOST THERE!</span>
+                    <h2>Check your email</h2>
+                    <p>We sent a 6-digit code to the email on your account. It expires in <?= LOGIN_CODE_MINUTES ?> minutes.</p>
+                </div>
+
+                <form method="post">
+                    <?= csrf_field() ?>
+
+                    <div class="form-group">
+                        <label for="code">Code</label>
+
+                        <input
+                            type="text"
+                            id="code"
+                            name="code"
+                            placeholder="6-digit code"
+                            inputmode="numeric"
+                            pattern="[0-9 ]*"
+                            maxlength="12"
+                            autocomplete="one-time-code"
+                            required>
+                    </div>
+
+                    <p class="login-error" role="alert"><?= htmlspecialchars($error, ENT_QUOTES) ?></p>
+
+                    <button type="submit" class="login-button">
+                        Log In
+                    </button>
+                </form>
+
+                <div class="login-divider">
+                    <span>DIDN'T GET IT?</span>
+                </div>
+
+                <form method="post">
+                    <?= csrf_field() ?>
+                    <button type="submit" name="resend" value="1" class="login-button">
+                        Send a new code
+                    </button>
+                </form>
+
+                <p class="login-help">
+                    <a href="login.php">Start over</a>
+                </p>
+
+            </div>
+
+            <footer class="login-footer">
+                © <span id="login-year"></span> MCC GranTrack.
+                All Rights Reserved.
+            </footer>
+
+        </section>
+
+    </main>
+
+    <script src="assets/js/login.js"></script>
+
 </body>
 </html>
