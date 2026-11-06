@@ -633,3 +633,9 @@
 .document-note {
     color: var(--crimson);
 }
+
+.mark-read-button {
+   border: none;
+   cursor: pointer;
+   font-family: inherit;
+}
