@@ -8,7 +8,7 @@ function e(?string $text): string
     return htmlspecialchars((string) $text, ENT_QUOTES);
 }
 
-$stmt = $pdo->prepare('SELECT id, program_id, student_number FROM scholars WHERE user_id = ?');
+$stmt = $pdo->prepare('SELECT id, program_id, student_number, status FROM scholars WHERE user_id = ?');
 $stmt->execute([$user['id']]);
 $scholar = $stmt->fetch() ?: null;
 
