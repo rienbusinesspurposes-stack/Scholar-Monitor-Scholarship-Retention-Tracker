@@ -6,6 +6,7 @@ require_once __DIR__ . '/../includes/scholar_status.php';
 
 $user = requireRole(['Admin', 'SuperAdmin']);
 $pageTitle = 'Scholars';
+$pageIntro = 'Add students to a scholarship program and verify them.';
 
 // Adds a User-role account as a Pending scholar in a program. Returns an error message, or null on success.
 function addScholar(int $adminId, int $userId, int $programId, string $number): ?string
@@ -95,13 +96,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             (string) ($_POST['student_number'] ?? '')
         );
         $_SESSION['flash'] = $error
-            ? ['type' => 'error', 'text' => $error]
-            : ['type' => 'success', 'text' => 'Scholar added and is now awaiting verification.'];
+            ? ['error', $error]
+            : ['success', 'Scholar added and is now awaiting verification.'];
     } elseif ($action === 'verify') {
         $error = verifyScholar($user['id'], (int) ($_POST['scholar_id'] ?? 0));
         $_SESSION['flash'] = $error
-            ? ['type' => 'error', 'text' => $error]
-            : ['type' => 'success', 'text' => 'Scholar verified and activated.'];
+            ? ['error', $error]
+            : ['success', 'Scholar verified.'];
     }
     redirect('admin/scholars.php');
 }
@@ -129,14 +130,14 @@ $allScholars = $pdo->query(
 require __DIR__ . '/../includes/admin_header.php';
 ?>
 
-<section class="panel">
-    <h2>Add a scholar</h2>
+<section class="content-panel">
+    <div class="panel-header"><div><h2>Add a scholar</h2><p>Student accounts that are not a scholar yet</p></div></div>
     <?php if (!$unassignedUsers): ?>
         <p>Every active student account already has a scholar record.</p>
     <?php elseif (!$activePrograms): ?>
         <p>There are no active scholarship programs to assign.</p>
     <?php else: ?>
-        <form method="post" class="upload-form">
+        <form method="post" class="stack-form">
             <?= csrf_field() ?>
             <input type="hidden" name="action" value="add">
 
@@ -158,49 +159,45 @@ require __DIR__ . '/../includes/admin_header.php';
 
             <label for="student_number">Student number</label>
             <input type="text" name="student_number" id="student_number" required maxlength="30"
-                   pattern="[A-Za-z0-9-]{3,30}" title="3 to 30 letters, digits or dashes">
+                   pattern="[A-Za-z0-9\-]{3,30}" title="3 to 30 letters, digits or dashes">
 
-            <button type="submit">Add scholar</button>
+            <button type="submit" class="btn">Add scholar</button>
         </form>
     <?php endif; ?>
 </section>
 
-<section class="panel">
-    <h2>All scholars</h2>
+<section class="content-panel panel-gap">
+    <div class="panel-header"><div><h2>All scholars</h2><p>Pending first</p></div></div>
     <?php if (!$allScholars): ?>
         <p>No scholars yet.</p>
     <?php else: ?>
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Student</th>
-                    <th>Student #</th>
-                    <th>Program</th>
-                    <th>Status</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($allScholars as $row): ?>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr><th>Student</th><th>Student #</th><th>Program</th><th>Status</th><th></th></tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($allScholars as $row): ?>
                     <tr>
                         <td><?= e($row['full_name']) ?></td>
                         <td><?= e($row['student_number']) ?></td>
                         <td><?= e($row['program_name']) ?></td>
-                        <td><?= e($row['status']) ?></td>
+                        <td><span class="req-status <?= match ($row['status']) { 'Active' => 'is-done', 'Ineligible' => 'is-missing', default => 'is-pending' } ?>"><?= $row['status'] === 'AtRisk' ? 'At Risk' : e($row['status']) ?></span></td>
                         <td>
                             <?php if ($row['status'] === 'Pending'): ?>
-                                <form method="post" style="display:inline">
-                                    <?= csrf_field() ?>
-                                    <input type="hidden" name="action" value="verify">
-                                    <input type="hidden" name="scholar_id" value="<?= $row['id'] ?>">
-                                    <button type="submit">Verify</button>
-                                </form>
+                            <form method="post" class="inline-form">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="action" value="verify">
+                                <input type="hidden" name="scholar_id" value="<?= $row['id'] ?>">
+                                <button type="submit" class="btn btn-small">Verify</button>
+                            </form>
                             <?php endif; ?>
                         </td>
                     </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     <?php endif; ?>
 </section>
 

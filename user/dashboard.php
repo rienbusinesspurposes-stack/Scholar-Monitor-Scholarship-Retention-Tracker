@@ -1,12 +1,12 @@
 <?php
-// Student dashboard: status, latest grade, missing documents, next deadlines and recent alerts for the logged-in User.
+// Student dashboard: status, latest grade, missing documents, next deadlines and a profile summary for the logged-in User.
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/security.php';
 require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/scholar_status.php';
 
 $user = requireRole(['User']);
-$pageTitle = 'Student Portal';
+$pageTitle = 'Student Dashboard';
 require __DIR__ . '/../includes/user_header.php'; // also sets $scholar and $unread
 
 $status  = 'None';
@@ -32,9 +32,17 @@ if ($scholar) {
 }
 $dated = array_values(array_filter($missing, fn($row) => $row['due_date'] !== null));
 
-$stmt = $pdo->prepare('SELECT message, created_at, read_at FROM notifications WHERE user_id = ? ORDER BY id DESC LIMIT 2');
-$stmt->execute([$user['id']]);
-$alerts = $stmt->fetchAll();
+$program = null;
+if ($scholar) {
+    $stmt = $pdo->prepare('SELECT name FROM scholarship_programs WHERE id = ?');
+    $stmt->execute([$scholar['program_id']]);
+    $program = $stmt->fetchColumn() ?: null;
+}
+// Academic year runs June to May, e.g. November 2026 is 2026–2027.
+$year    = (int) date('Y') - ((int) date('n') < 6 ? 1 : 0);
+$parts   = preg_split('/\s+/', trim((string) $user['full_name']));
+$initials = mb_strtoupper(mb_substr($parts[0], 0, 1) . (count($parts) > 1 ? mb_substr(end($parts), 0, 1) : ''));
+$firstName = $parts[0];
 
 $statusLabel = ['None' => 'No Record', 'Pending' => 'Pending', 'Active' => 'Active', 'AtRisk' => 'At Risk', 'Ineligible' => 'Ineligible', 'Ended' => 'Ended'];
 $statusText  = [
@@ -45,162 +53,69 @@ $statusText  = [
     'Ineligible' => 'Your grade is below the minimum for your scholarship.',
     'Ended'      => 'Your scholarship has ended.',
 ];
-$today = new DateTimeImmutable('today');
 ?>
 
-            <section class="dashboard-content">
-
-                <!-- Welcome -->
-                <section class="welcome-section">
-
+                <!-- Welcome banner -->
+                <section class="welcome-banner">
                     <div>
                         <p class="section-label">STUDENT DASHBOARD</p>
-                        <h1 id="welcome-message"></h1>
-                        <p>
-                            Here's an overview of your scholarship
-                            information and current requirements.
-                        </p>
+                        <h1 id="welcome-message" data-name="<?= e($firstName) ?>">Welcome!</h1>
+                        <p class="welcome-tagline">Ing abante mu, ing bukas mu.</p>
                     </div>
-
-                    <div class="academic-year">
-                        <span>ACADEMIC YEAR</span>
-                        <strong>2026–2027</strong>
-                    </div>
-
                 </section>
 
+                <!-- Profile and overview -->
+                <div class="wire-grid">
 
-                <!-- Summary cards -->
-                <section class="summary-section">
+                    <div class="wire-col">
+                        <div class="wire-pill">ACADEMIC YEAR (<?= $year ?>–<?= $year + 1 ?>)</div>
 
-                    <h2 class="section-title">Scholarship Overview</h2>
+                        <section class="card profile-card wire-profile" aria-label="Student profile summary">
+                            <div class="profile-avatar" aria-hidden="true"><?= e($initials) ?></div>
+                            <h2 class="profile-name"><?= e($user['full_name']) ?></h2>
+                            <p class="profile-meta">Student No.: <?= e($scholar['student_number'] ?? '—') ?></p>
+                            <p class="profile-meta"><?= $program ? e($program) : 'No scholarship program yet' ?></p>
+                            <span class="profile-badge"><?= e($statusLabel[$status]) ?></span>
+                        </section>
 
-                    <div class="summary-grid">
+                        <section class="card office-card" aria-label="School office hours">
+                            <h2 class="card-title">School Office Hours</h2>
+                            <div class="hours-row"><strong>Registrar</strong><span>Mon–Fri, 8:00 AM – 5:00 PM</span></div>
+                            <div class="hours-row"><strong>Finance</strong><span>Mon–Fri, 8:00 AM – 4:00 PM</span></div>
+                            <div class="hours-row"><strong>Scholarship Office</strong><span>Mon–Fri, 9:00 AM – 4:00 PM</span></div>
+                        </section>
+                    </div>
 
-                        <article class="summary-card">
-                            <div class="card-header">
-                                <span class="card-label">Scholarship Status</span>
-                                <span class="card-icon" aria-hidden="true">🎖</span>
-                            </div>
-                            <h2><span class="<?= $status === 'Active' ? 'status-active' : 'status-warning' ?>"><?= e($statusLabel[$status]) ?></span></h2>
+                    <div class="wire-col">
+                        <div class="wire-pill">OVERVIEW</div>
+
+                        <article class="summary-card wire-card">
+                            <span class="card-label">Scholarship Status</span>
+                            <h3><span class="<?= $status === 'Active' ? 'status-active' : ($status === 'Ineligible' ? 'status-danger' : 'status-warning') ?>"><?= e($statusLabel[$status]) ?></span></h3>
                             <p><?= e($statusText[$status]) ?></p>
                         </article>
 
-                        <article class="summary-card">
-                            <div class="card-header">
-                                <span class="card-label">Current GWA</span>
-                                <span class="card-icon" aria-hidden="true">🕮</span>
-                            </div>
+                        <article class="summary-card wire-card">
+                            <span class="card-label">Current GWA</span>
                             <h3><?= $gwa === false || $gwa === null ? '—' : number_format((float) $gwa, 2) ?></h3>
                             <p>Latest recorded academic performance.</p>
                         </article>
 
-                        <article class="summary-card">
-                            <div class="card-header">
-                                <span class="card-label">Missing Documents</span>
-                                <span class="card-icon" aria-hidden="true">🗎</span>
-                            </div>
-                            <h3><span class="<?= $missing ? 'status-warning' : 'status-active' ?>"><?= count($missing) ?></span></h3>
+                        <article class="summary-card wire-card">
+                            <span class="card-label">Missing Documents</span>
+                            <h3><span class="<?= $missing ? 'status-danger' : 'status-active' ?>"><?= count($missing) ?></span></h3>
                             <p>Document requiring your attention.</p>
                             <a href="documents.php" class="card-link">View documents →</a>
                         </article>
 
-                        <article class="summary-card">
-                            <div class="card-header">
-                                <span class="card-label">Upcoming Deadlines</span>
-                                <span class="card-icon" aria-hidden="true">◷</span>
-                            </div>
+                        <article class="summary-card wire-card">
+                            <span class="card-label">Upcoming Deadlines</span>
                             <h3><?= count($dated) ?></h3>
                             <p>Requirements with upcoming due dates.</p>
                             <a href="deadlines.php" class="card-link">View deadlines →</a>
                         </article>
-
                     </div>
-
-                </section>
-
-
-                <!-- Alerts + deadlines -->
-                <div class="dashboard-grid">
-
-                    <section class="content-panel">
-
-                        <div class="panel-header">
-                            <div>
-                                <h2>Recent Alerts</h2>
-                                <p>Important scholarship notifications</p>
-                            </div>
-                            <a href="notifications.php">View All</a>
-                        </div>
-
-                        <?php foreach ($alerts as $alert): ?>
-                        <article class="alert-item">
-                            <div class="alert-icon info-icon" aria-hidden="true">i</div>
-                            <div class="alert-details">
-                                <h3>Notification</h3>
-                                <p><?= e($alert['message']) ?></p>
-                                <span><?= e(date('F j, Y', strtotime($alert['created_at']))) ?></span>
-                            </div>
-                            <?php if ($alert['read_at'] === null): ?><span class="alert-status new">New</span><?php endif; ?>
-                        </article>
-                        <?php endforeach; ?>
-                        <?php if (!$alerts): ?><p>No notifications yet.</p><?php endif; ?>
-
-                    </section>
-
-                    <section class="content-panel">
-
-                        <div class="panel-header">
-                            <div>
-                                <h2>Next Deadlines</h2>
-                                <p>Upcoming scholarship requirements</p>
-                            </div>
-                            <a href="deadlines.php">View All</a>
-                        </div>
-
-                        <?php foreach (array_slice($dated, 0, 2) as $row):
-                            $due  = new DateTimeImmutable($row['due_date']);
-                            $days = (int) $today->diff($due)->format('%r%a');
-                            [$tag, $tagClass] = $days < 0 ? ['Overdue', 'deadline-warning']
-                                : ($days <= 7 ? ['Due soon', 'deadline-warning'] : ['Upcoming', 'deadline-normal']);
-                        ?>
-                        <article class="deadline-item">
-                            <div class="deadline-date">
-                                <strong><?= $due->format('d') ?></strong>
-                                <span><?= strtoupper($due->format('M')) ?></span>
-                            </div>
-                            <div class="deadline-details">
-                                <h3><?= e($row['name']) ?></h3>
-                                <p>Required document</p>
-                                <span class="<?= $tagClass ?>"><?= $tag ?></span>
-                            </div>
-                        </article>
-                        <?php endforeach; ?>
-                        <?php if (!$dated): ?><p>No deadlines right now.</p><?php endif; ?>
-
-                    </section>
 
                 </div>
-
-
-                <!-- Reminder -->
-                <section class="reminder-panel">
-
-                    <div class="reminder-content">
-                        <h2>Scholarship Reminder</h2>
-                        <p>
-                            Maintain your academic performance and submit all
-                            required documents on time to remain eligible for
-                            your scholarship.
-                        </p>
-                    </div>
-
-                    <a href="scholarship.php" class="reminder-link">
-                        View Scholarship Details →
-                    </a>
-
-                </section>
-
-            </section>
 
 <?php require __DIR__ . '/../includes/user_footer.php'; ?>

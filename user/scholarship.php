@@ -27,6 +27,19 @@ if ($scholar) {
     $stmt->execute([$scholar['id']]);
     $gwa = $stmt->fetchColumn(); // false when no grade is recorded yet
 }
+$reqs = [];
+if ($scholar) {
+    $stmt = $pdo->prepare(
+        'SELECT r.name, d.status
+         FROM document_requirements r
+         LEFT JOIN scholar_documents d ON d.requirement_id = r.id AND d.scholar_id = ?
+         WHERE r.program_id = ?
+         ORDER BY r.due_date IS NULL, r.due_date, r.name'
+    );
+    $stmt->execute([$scholar['id'], $scholar['program_id']]);
+    $reqs = $stmt->fetchAll();
+}
+$year = (int) date('Y') - ((int) date('n') < 6 ? 1 : 0); // academic year runs June to May
 $hasGrade = $gwa !== false && $gwa !== null;
 
 $statusLabel = ['None' => 'No Record', 'Pending' => 'Pending', 'Active' => 'Active', 'AtRisk' => 'At Risk', 'Ineligible' => 'Ineligible', 'Ended' => 'Ended'];
@@ -40,98 +53,48 @@ $statusText  = [
 ];
 ?>
 
-            <section class="dashboard-content">
+                <div class="page-header">
+                    <p class="section-label">BALUQ: Student Portal</p>
+                    <h1>My Scholarship</h1>
+                    <p>Your scholarship status and renewal requirements.</p>
+                </div>
 
-                <section class="summary-section">
+                <div class="two-col">
 
-                    <h2 class="section-title"><?= $program ? e($program['name']) : 'Scholarship' ?></h2>
-
-                    <div class="summary-grid">
-
-                        <article class="summary-card">
-                            <div class="card-header">
-                                <span class="card-label">Scholarship Status</span>
-                                <span class="card-icon" aria-hidden="true">🎖</span>
-                            </div>
-                            <h2><span class="<?= $status === 'Active' ? 'status-active' : 'status-warning' ?>"><?= e($statusLabel[$status]) ?></span></h2>
-                            <p><?= e($statusText[$status]) ?></p>
-                        </article>
-
+                    <section class="content-panel">
+                        <div class="panel-header"><div><h2>Scholarship Details</h2><p>Current academic year</p></div></div>
                         <?php if ($program): ?>
-                        <article class="summary-card">
-                            <div class="card-header">
-                                <span class="card-label">Minimum Average</span>
-                                <span class="card-icon" aria-hidden="true">🕮</span>
-                            </div>
-                            <h3><?= number_format((float) $program['min_grade'], 2) ?></h3>
-                            <p>The average you must keep.</p>
-                        </article>
-
-                        <article class="summary-card">
-                            <div class="card-header">
-                                <span class="card-label">Your Latest Average</span>
-                                <span class="card-icon" aria-hidden="true">🗒</span>
-                            </div>
-                            <h3><?= $hasGrade ? number_format((float) $gwa, 2) : '—' ?></h3>
-                            <p><?= $hasGrade
-                                ? number_format(abs((float) $gwa - (float) $program['min_grade']), 2) . ((float) $gwa >= (float) $program['min_grade'] ? ' points above the minimum.' : ' points below the minimum.')
-                                : 'No grade recorded yet.' ?></p>
-                            <a href="academics-record.php" class="card-link">View grade history →</a>
-                        </article>
+                        <div class="req-row"><span>Scholarship</span><span><?= e($program['name']) ?></span></div>
+                        <div class="req-row"><span>Academic Year</span><span><?= $year ?>–<?= $year + 1 ?></span></div>
+                        <div class="req-row"><span>Student Number</span><span><?= e($scholar['student_number']) ?></span></div>
+                        <div class="req-row"><span>Status</span><span class="req-status <?= $status === 'Active' ? 'is-done' : ($status === 'Ineligible' ? 'is-missing' : 'is-pending') ?>"><?= e($statusLabel[$status]) ?></span></div>
+                        <div class="req-row"><span>Minimum Average</span><span><?= number_format((float) $program['min_grade'], 2) ?></span></div>
+                        <div class="req-row"><span>Latest Average</span><span><?= $hasGrade ? number_format((float) $gwa, 2) : '—' ?></span></div>
+                        <div class="req-row"><span>Verified</span><span><?= $program['verified_at'] ? e(date('F j, Y', strtotime($program['verified_at']))) : 'Not yet' ?></span></div>
+                        <p class="panel-note"><?= e($statusText[$status]) ?>
+                            Your status becomes At Risk when your average is less than <?= number_format((float) $program['warning_margin'], 2) ?> points above the minimum, and Ineligible when it falls below it.</p>
+                        <?php if ($program['description']): ?><p class="panel-note"><?= e($program['description']) ?></p><?php endif; ?>
+                        <a href="academics-record.php" class="card-link">View grade history →</a>
+                        <?php else: ?>
+                        <p><?= e($statusText['None']) ?></p>
                         <?php endif; ?>
+                    </section>
 
-                    </div>
+                    <section class="content-panel">
+                        <div class="panel-header"><div><h2>Renewal Requirements</h2><p>Your required documents</p></div><a href="documents.php">My Documents</a></div>
+                        <?php foreach ($reqs as $req):
+                            [$label, $class] = match ($req['status']) {
+                                'Approved'  => ['Approved', 'is-done'],
+                                'Submitted' => ['Submitted', 'is-pending'],
+                                'Rejected'  => ['Rejected', 'is-missing'],
+                                default     => ['Missing', 'is-missing'],
+                            };
+                        ?>
+                        <div class="req-row"><span><?= e($req['name']) ?></span><span class="req-status <?= $class ?>"><?= $label ?></span></div>
+                        <?php endforeach; ?>
+                        <?php if (!$reqs): ?><p>No documents are required right now.</p><?php endif; ?>
+                    </section>
 
-                </section>
-
-                <?php if ($program): ?>
-                <section class="content-panel">
-
-                    <div class="panel-header">
-                        <div>
-                            <h2>Scholarship Details</h2>
-                            <p>How your scholarship is checked</p>
-                        </div>
-                        <a href="documents.php">My Documents</a>
-                    </div>
-
-                    <?php if ($program['description']): ?>
-                    <article class="alert-item">
-                        <div class="alert-icon info-icon" aria-hidden="true">i</div>
-                        <div class="alert-details">
-                            <h3>About this scholarship</h3>
-                            <p><?= e($program['description']) ?></p>
-                        </div>
-                    </article>
-                    <?php endif; ?>
-
-                    <article class="alert-item">
-                        <div class="alert-icon info-icon" aria-hidden="true">i</div>
-                        <div class="alert-details">
-                            <h3>Student number</h3>
-                            <p><?= e($scholar['student_number']) ?></p>
-                        </div>
-                    </article>
-
-                    <article class="alert-item">
-                        <div class="alert-icon info-icon" aria-hidden="true">i</div>
-                        <div class="alert-details">
-                            <h3>Verification</h3>
-                            <p><?= $program['verified_at'] ? 'Verified on ' . e(date('F j, Y', strtotime($program['verified_at']))) : 'Not verified yet.' ?></p>
-                        </div>
-                    </article>
-
-                    <article class="alert-item">
-                        <div class="alert-icon warning-icon" aria-hidden="true">!</div>
-                        <div class="alert-details">
-                            <h3>When you are at risk</h3>
-                            <p>Your status becomes At Risk when your average is less than <?= number_format((float) $program['warning_margin'], 2) ?> points above the minimum, and Ineligible when it falls below the minimum.</p>
-                        </div>
-                    </article>
-
-                </section>
-                <?php endif; ?>
-
-            </section>
+                </div>
 
 <?php require __DIR__ . '/../includes/user_footer.php'; ?>

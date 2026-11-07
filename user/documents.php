@@ -94,6 +94,7 @@ $flash = $_SESSION['flash'] ?? null;
 unset($_SESSION['flash']);
 
 $pageTitle = 'My Documents';
+$pageScript = 'documents.js'; // shows the chosen file name next to the upload button
 require __DIR__ . '/../includes/user_header.php'; // also sets $scholar and $unread
 
 $rows = [];
@@ -113,76 +114,62 @@ $uploadable = $scholar && $scholar['status'] !== 'Ended'
     : [];
 // status => [badge text, badge class]
 $badge = [
-    null       => ['Missing', 'pending'],
-    'Submitted' => ['Submitted', 'pending'],
-    'Approved'  => ['Approved', 'approved'],
-    'Rejected'  => ['Rejected', 'new'],
+    null        => ['Missing', 'is-missing'],
+    'Submitted' => ['Submitted', 'is-pending'],
+    'Approved'  => ['Approved', 'is-done'],
+    'Rejected'  => ['Rejected', 'is-missing'],
 ];
 ?>
 
-            <section class="dashboard-content">
+                <div class="page-header">
+                    <p class="section-label">BALUQ: Student Portal</p>
+                    <h1>My Documents</h1>
+                    <p>Upload and track your scholarship requirements.</p>
+                </div>
 
-                <section class="content-panel">
+                <?php if ($flash): ?>
+                <p class="form-message <?= $flash[0] === 'success' ? 'success' : 'error' ?>" role="alert"><?= e($flash[1]) ?></p>
+                <?php endif; ?>
 
-                    <div class="panel-header">
-                        <div>
-                            <h2>Upload a Document</h2>
-                            <p>PDF, JPG or PNG, up to 5 MB. Uploading again replaces a document that is not yet approved.</p>
-                        </div>
-                    </div>
+                <div class="two-col">
 
-                    <?php if ($flash): ?>
-                    <p class="form-message <?= $flash[0] === 'success' ? 'success' : 'error' ?>" role="alert"><?= e($flash[1]) ?></p>
-                    <?php endif; ?>
+                    <section class="content-panel">
+                        <div class="panel-header"><div><h2>Upload a Document</h2><p>PDF, JPG or PNG, up to 5 MB. Uploading again replaces a document that is not yet approved.</p></div></div>
 
-                    <?php if ($uploadable): ?>
-                    <form method="post" enctype="multipart/form-data" class="upload-form">
-                        <?= csrf_field() ?>
-                        <select name="requirement_id" aria-label="Requirement" required>
-                            <?php foreach ($uploadable as $row): ?>
-                            <option value="<?= (int) $row['id'] ?>"><?= e($row['name']) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <input type="file" name="document" accept=".pdf,.jpg,.jpeg,.png" aria-label="File" required>
-                        <button type="submit" class="reminder-link">Upload</button>
-                    </form>
-                    <?php elseif ($rows): ?>
-                    <p>Nothing left to upload.</p>
-                    <?php else: ?>
-                    <p>No documents are required right now.</p>
-                    <?php endif; ?>
+                        <?php if ($uploadable): ?>
+                        <form method="post" enctype="multipart/form-data" class="upload-form">
+                            <?= csrf_field() ?>
+                            <label for="requirement_id">Requirement</label>
+                            <select name="requirement_id" id="requirement_id" required>
+                                <?php foreach ($uploadable as $row): ?>
+                                <option value="<?= (int) $row['id'] ?>"><?= e($row['name']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <label class="btn" for="document-upload">Choose File</label>
+                            <input type="file" id="document-upload" name="document" class="sr-only" accept=".pdf,.jpg,.jpeg,.png" required>
+                            <p id="file-name" class="deadline-meta">No file selected</p>
+                            <button type="submit" class="btn">Upload</button>
+                        </form>
+                        <?php elseif ($rows): ?>
+                        <p>Nothing left to upload.</p>
+                        <?php else: ?>
+                        <p>No documents are required right now.</p>
+                        <?php endif; ?>
+                    </section>
 
-                </section>
+                    <section class="content-panel">
+                        <div class="panel-header"><div><h2>Submission Status</h2><p>Required documents for your scholarship</p></div></div>
 
-                <section class="content-panel">
+                        <?php foreach ($rows as $row):
+                            [$label, $class] = $badge[$row['status']];
+                        ?>
+                        <div class="req-row"><span><?= e($row['name']) ?><?= $row['due_date'] ? ' · due ' . e(date('M j, Y', strtotime($row['due_date']))) : '' ?></span><span class="req-status <?= $class ?>"><?= $label ?></span></div>
+                        <?php if ($row['original_name']): ?><p class="deadline-meta">File: <?= e($row['original_name']) ?></p><?php endif; ?>
+                        <?php if ($row['status'] === 'Rejected' && $row['note']): ?><p class="deadline-meta document-note">Staff note: <?= e($row['note']) ?></p><?php endif; ?>
+                        <?php endforeach; ?>
+                        <?php if (!$rows): ?><p>No documents are required right now.</p><?php endif; ?>
+                    </section>
 
-                    <div class="panel-header">
-                        <div>
-                            <h2>My Requirements</h2>
-                            <p>Required documents for your scholarship</p>
-                        </div>
-                    </div>
-
-                    <?php foreach ($rows as $row):
-                        [$label, $class] = $badge[$row['status']];
-                        $needsAction = $row['status'] === null || $row['status'] === 'Rejected';
-                    ?>
-                    <article class="alert-item">
-                        <div class="alert-icon <?= $needsAction ? 'warning-icon' : 'info-icon' ?>" aria-hidden="true"><?= $needsAction ? '!' : 'i' ?></div>
-                        <div class="alert-details">
-                            <h3><?= e($row['name']) ?></h3>
-                            <?php if ($row['description']): ?><p><?= e($row['description']) ?></p><?php endif; ?>
-                            <?php if ($row['original_name']): ?><p>File: <?= e($row['original_name']) ?></p><?php endif; ?>
-                            <?php if ($row['status'] === 'Rejected' && $row['note']): ?><p class="document-note">Staff note: <?= e($row['note']) ?></p><?php endif; ?>
-                            <span><?= $row['due_date'] ? 'Due ' . e(date('F j, Y', strtotime($row['due_date']))) : 'No due date' ?></span>
-                        </div>
-                        <span class="alert-status <?= $class ?>"><?= $label ?></span>
-                    </article>
-                    <?php endforeach; ?>
-                    <?php if (!$rows): ?><p>No documents are required right now.</p><?php endif; ?>
-
-                </section>
-
-            </section>
+                </div>
 
 <?php require __DIR__ . '/../includes/user_footer.php'; ?>

@@ -23,40 +23,42 @@ if ($scholar) {
 }
 // result of statusForGrade() => [badge text, badge class]
 $badge = [
-    'Active'     => ['On track', 'approved'],
-    'AtRisk'     => ['Close to the minimum', 'pending'],
-    'Ineligible' => ['Below the minimum', 'new'],
+    'Active'     => ['On track', 'is-done'],
+    'AtRisk'     => ['Close to the minimum', 'is-pending'],
+    'Ineligible' => ['Below the minimum', 'is-missing'],
 ];
 ?>
 
-            <section class="dashboard-content">
+                <div class="page-header">
+                    <p class="section-label">BALUQ: Student Portal</p>
+                    <h1>Academics Record</h1>
+                    <p><?= $program ? 'Minimum average to keep your scholarship: ' . number_format((float) $program['min_grade'], 2) . '.' : 'Your recorded grade averages.' ?></p>
+                </div>
 
                 <section class="content-panel">
-
-                    <div class="panel-header">
-                        <div>
-                            <h2>Grade History</h2>
-                            <p><?= $program ? 'Minimum average to keep your scholarship: ' . number_format((float) $program['min_grade'], 2) : 'Your recorded grade averages' ?></p>
-                        </div>
+                    <?php if ($grades): ?>
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>Term</th><th>Average</th><th>Remarks</th><th>Recorded</th></tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($grades as $grade):
+                                    [$label, $class] = $badge[statusForGrade($grade['average'], $program['min_grade'], $program['warning_margin'])];
+                                ?>
+                                <tr>
+                                    <td><?= e($grade['term']) ?></td>
+                                    <td><?= number_format((float) $grade['average'], 2) ?></td>
+                                    <td><span class="req-status <?= $class ?>"><?= $label ?></span></td>
+                                    <td><?= e(date('F j, Y', strtotime($grade['created_at']))) ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
                     </div>
-
-                    <?php foreach ($grades as $grade):
-                        [$label, $class] = $badge[statusForGrade($grade['average'], $program['min_grade'], $program['warning_margin'])];
-                    ?>
-                    <article class="alert-item">
-                        <div class="alert-icon info-icon" aria-hidden="true">i</div>
-                        <div class="alert-details">
-                            <h3><?= e($grade['term']) ?></h3>
-                            <p>Average: <?= number_format((float) $grade['average'], 2) ?></p>
-                            <span>Recorded <?= e(date('F j, Y', strtotime($grade['created_at']))) ?></span>
-                        </div>
-                        <span class="alert-status <?= $class ?>"><?= $label ?></span>
-                    </article>
-                    <?php endforeach; ?>
-                    <?php if (!$grades): ?><p><?= $scholar ? 'No grades have been recorded yet.' : 'No scholarship record is linked to your account yet.' ?></p><?php endif; ?>
-
+                    <?php else: ?>
+                    <p><?= $scholar ? 'No grades have been recorded yet.' : 'No scholarship record is linked to your account yet.' ?></p>
+                    <?php endif; ?>
                 </section>
-
-            </section>
 
 <?php require __DIR__ . '/../includes/user_footer.php'; ?>

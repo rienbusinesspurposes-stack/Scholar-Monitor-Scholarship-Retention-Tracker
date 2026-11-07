@@ -1,6 +1,4 @@
-/* =====================================================
-   DASHBOARD — greeting and footer year
-===================================================== */
+// Dashboard content
 
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -16,10 +14,11 @@ document.addEventListener("DOMContentLoaded", function () {
             greeting = "Good afternoon";
         }
 
-        welcome.textContent = greeting + ", iSKOLAR!";
+        // The page puts the student's first name in data-name; without it the greeting stays plain
+        var name = welcome.getAttribute("data-name");
+        welcome.textContent = greeting + (name ? ", " + name : "") + "!";
     }
 
-    // Any element with data-year gets the current year
     document.querySelectorAll("[data-year]").forEach(function (element) {
         element.textContent = new Date().getFullYear();
     });

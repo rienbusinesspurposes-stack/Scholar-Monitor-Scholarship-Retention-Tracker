@@ -22,7 +22,11 @@ $stmt->execute([$user['id']]);
 $alerts = $stmt->fetchAll();
 ?>
 
-            <section class="dashboard-content">
+                <div class="page-header">
+                    <p class="section-label">BALUQ: Student Portal</p>
+                    <h1>Notifications</h1>
+                    <p>Important scholarship announcements.</p>
+                </div>
 
                 <section class="content-panel">
 
@@ -32,16 +36,16 @@ $alerts = $stmt->fetchAll();
                             <p><?= $unread > 0 ? $unread . ' unread' : 'You are all caught up' ?></p>
                         </div>
                         <?php if ($unread > 0): ?>
-                        <form method="post">
+                        <form method="post" class="inline-form">
                             <?= csrf_field() ?>
-                            <button type="submit" class="reminder-link mark-read-button">Mark all as read</button>
+                            <button type="submit" class="btn btn-small mark-read-button">Mark all as read</button>
                         </form>
                         <?php endif; ?>
                     </div>
 
                     <?php foreach ($alerts as $alert): ?>
                     <article class="alert-item">
-                        <div class="alert-icon info-icon" aria-hidden="true">i</div>
+                        <div class="alert-icon <?= $alert['read_at'] === null ? 'info-icon' : 'done-icon' ?>" aria-hidden="true"><?= $alert['read_at'] === null ? 'i' : '✓' ?></div>
                         <div class="alert-details">
                             <h3><?= e($alert['message']) ?></h3>
                             <span><?= e(date('F j, Y, g:i A', strtotime($alert['created_at']))) ?></span>
@@ -52,7 +56,5 @@ $alerts = $stmt->fetchAll();
                     <?php if (!$alerts): ?><p>No notifications yet.</p><?php endif; ?>
 
                 </section>
-
-            </section>
 
 <?php require __DIR__ . '/../includes/user_footer.php'; ?>

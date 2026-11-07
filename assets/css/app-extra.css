@@ -1,0 +1,123 @@
+/* Extras the PHP pages need on top of the BALUQ design files (theme, base, layout, components).
+   Keep new rules here so the design files can be replaced without losing them. Uses the theme.css colors only. */
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* Status pills the design does not define */
+.alert-status.approved,
+.alert-status.done {
+    background: var(--success);
+    color: var(--white);
+}
+
+.req-status.is-rejected {
+    background: var(--danger);
+    color: var(--white);
+}
+
+/* Deadline tags used in the deadline list */
+.deadline-days.is-done {
+    color: var(--success);
+}
+
+.deadline-days.is-late {
+    color: var(--danger);
+}
+
+/* Form messages (flash) */
+.form-message {
+    margin: 0 0 14px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.form-message.success {
+    background: var(--success);
+    color: var(--white);
+}
+
+.form-message.error {
+    background: var(--danger);
+    color: var(--white);
+}
+
+.document-note {
+    color: var(--warning);
+}
+
+/* Forms inside panels */
+.upload-form,
+.stack-form {
+    position: relative; /* keeps the hidden file input inside the form */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 460px;
+}
+
+.upload-form label,
+.stack-form label {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--pastel);
+}
+
+.upload-form select,
+.upload-form input[type="text"],
+.upload-form input[type="number"],
+.stack-form select,
+.stack-form input[type="text"],
+.stack-form input[type="number"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--midnight);
+    border-radius: var(--radius-sm);
+    background: var(--black);
+    color: var(--white);
+    font: inherit;
+    font-size: 14px;
+}
+
+.upload-form select:focus,
+.upload-form input:focus,
+.stack-form select:focus,
+.stack-form input:focus {
+    outline: 2px solid var(--pastel);
+    outline-offset: 1px;
+}
+
+.upload-form .btn,
+.stack-form .btn {
+    align-self: flex-start;
+}
+
+.inline-form {
+    display: inline;
+    margin: 0;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.panel-gap {
+    margin-top: 20px;
+}
+
+.panel-note {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--muted);
+}

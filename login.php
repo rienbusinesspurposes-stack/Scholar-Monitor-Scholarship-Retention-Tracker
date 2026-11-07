@@ -68,8 +68,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | MCC GranTrack</title>
+    <title>Login | MCC BaluQ</title>
 
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS styles -->
+    <link rel="stylesheet" href="assets/css/theme.css">
     <link rel="stylesheet" href="assets/css/login.css">
 </head>
 
@@ -79,14 +86,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <!-- Left Branding Section -->
         <section class="login-brand">
-            <img src="assets/images/grantrack-login-logo-white.png"
-                 alt="GranTrack Logo"
+            <img src="assets/images/BALUQ-LOGO-WHITE.png"
+                 alt="BaluQ Logo"
                  class="login-logo">
 
-            <h1>MCC GranTrack</h1>
+            <h1>MCC BaluQ</h1>
 
             <p class="brand-tagline">
-                Bantay Grant, Gabay sa Pangarap.
+                Ing abante mu, Ing bukas mu.
             </p>
 
             <div class="brand-message">
@@ -97,9 +104,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </p>
             </div>
 
-            <p class="brand-footer">
-                MCC Scholarship Monitoring System
-            </p>
         </section>
 
 
@@ -109,8 +113,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="login-card">
 
                 <div class="mobile-brand">
-                    <img src="assets/images/grantrack-login-logo-white.png"
-                         alt="GranTrack Logo">
+                    <img src="assets/images/BALUQ-LOGO-Q.png"
+                         alt="BaluQ Logo"
+                         class="mobile-logo">
+
+                    <h2>"Balu Qu, iSKOLAR Qu"</h2>
                 </div>
 
                 <div class="login-heading">
@@ -182,8 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <footer class="login-footer">
-                © <span id="login-year"></span> MCC GranTrack.
-                All Rights Reserved.
+                © <span id="login-year"></span> BALUQ. All Rights Reserved.
             </footer>
 
         </section>

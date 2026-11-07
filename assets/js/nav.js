@@ -1,9 +1,4 @@
-/* =====================================================
-   NAV — sidebar behavior
-   1. Highlights the current page automatically
-   2. Mobile drawer (open, close, backdrop, Escape)
-   3. Logout confirmation modal
-===================================================== */
+// Navigation: sidebar, profile menu, logout
 
 (function () {
     "use strict";
@@ -14,98 +9,119 @@
         var sidebar = document.getElementById("sidebar");
         if (!sidebar) return;
 
-        var menuToggle = document.querySelector(".menu-toggle");
-        var backdrop = document.querySelector(".sidebar-backdrop");
-        var logoutModal = document.getElementById("logout-modal");
-
         highlightCurrentPage(sidebar);
-        setupDrawer(sidebar, menuToggle, backdrop);
-        setupLogoutModal(logoutModal);
+        setupSidebarToggle(sidebar);
+        setupProfileMenu();
+        setupLogoutModal();
     });
 
-    /* ---------- 1. Current page ---------- */
-
+    // Active link
     function getFileName(path) {
         var clean = (path || "").split(/[?#]/)[0];
         return clean.split("/").pop() || "index.html";
     }
 
     function highlightCurrentPage(sidebar) {
-        var currentPage = getFileName(window.location.pathname);
+        var current = getFileName(window.location.pathname);
 
         sidebar.querySelectorAll(".nav-link").forEach(function (link) {
-            var isCurrent = getFileName(link.getAttribute("href")) === currentPage;
-
+            var isCurrent = getFileName(link.getAttribute("href")) === current;
             link.classList.toggle("active", isCurrent);
-
-            if (isCurrent) {
-                link.setAttribute("aria-current", "page");
-            } else {
-                link.removeAttribute("aria-current");
-            }
+            isCurrent ? link.setAttribute("aria-current", "page") : link.removeAttribute("aria-current");
         });
     }
 
-    /* ---------- 2. Mobile drawer ---------- */
+    // Sidebar toggle: drawer on mobile, collapse on desktop
+    function setupSidebarToggle(sidebar) {
+        var toggle = document.querySelector(".menu-toggle");
+        var backdrop = document.querySelector(".sidebar-backdrop");
+        if (!toggle) return;
 
-    function setupDrawer(sidebar, menuToggle, backdrop) {
-        if (!menuToggle) return;
+        function isMobile() {
+            return !desktopQuery.matches;
+        }
 
         function isOpen() {
-            return sidebar.classList.contains("is-open");
+            return isMobile()
+                ? sidebar.classList.contains("is-open")
+                : !document.body.classList.contains("sidebar-collapsed");
         }
 
-        function openDrawer() {
-            sidebar.classList.add("is-open");
-            if (backdrop) backdrop.classList.add("is-visible");
-            document.body.classList.add("nav-open");
-            menuToggle.setAttribute("aria-expanded", "true");
-            menuToggle.setAttribute("aria-label", "Close navigation menu");
+        function setState(open) {
+            if (isMobile()) {
+                document.body.classList.remove("sidebar-collapsed");
+                sidebar.classList.toggle("is-open", open);
+                if (backdrop) backdrop.classList.toggle("is-visible", open);
+                document.body.classList.toggle("nav-open", open);
+            } else {
+                sidebar.classList.remove("is-open");
+                if (backdrop) backdrop.classList.remove("is-visible");
+                document.body.classList.remove("nav-open");
+                document.body.classList.toggle("sidebar-collapsed", !open);
+            }
+            toggle.setAttribute("aria-expanded", String(open));
+            toggle.setAttribute("aria-label", open ? "Hide navigation menu" : "Show navigation menu");
         }
 
-        function closeDrawer() {
-            sidebar.classList.remove("is-open");
-            if (backdrop) backdrop.classList.remove("is-visible");
-            document.body.classList.remove("nav-open");
-            menuToggle.setAttribute("aria-expanded", "false");
-            menuToggle.setAttribute("aria-label", "Open navigation menu");
-        }
-
-        menuToggle.addEventListener("click", function () {
-            isOpen() ? closeDrawer() : openDrawer();
+        toggle.addEventListener("click", function () {
+            setState(!isOpen());
         });
 
         if (backdrop) {
-            backdrop.addEventListener("click", closeDrawer);
+            backdrop.addEventListener("click", function () { setState(false); });
         }
 
-        // Close the drawer after choosing a page on small screens
         sidebar.querySelectorAll(".nav-link").forEach(function (link) {
             link.addEventListener("click", function () {
-                if (!desktopQuery.matches) closeDrawer();
+                if (isMobile()) setState(false);
             });
         });
 
-        // Reset the drawer if the window grows to desktop size
-        desktopQuery.addEventListener("change", function (event) {
-            if (event.matches) closeDrawer();
+        desktopQuery.addEventListener("change", function () {
+            setState(!isMobile());
         });
 
         document.addEventListener("keydown", function (event) {
-            if (event.key === "Escape" && isOpen()) closeDrawer();
+            if (event.key === "Escape" && isMobile() && isOpen()) setState(false);
+        });
+
+        setState(!isMobile());
+    }
+
+    // Profile dropdown
+    function setupProfileMenu() {
+        var menu = document.querySelector(".profile-menu");
+        if (!menu) return;
+
+        var trigger = menu.querySelector(".profile-trigger");
+
+        function setOpen(open) {
+            menu.classList.toggle("is-open", open);
+            trigger.setAttribute("aria-expanded", String(open));
+        }
+
+        trigger.addEventListener("click", function (event) {
+            event.stopPropagation();
+            setOpen(!menu.classList.contains("is-open"));
+        });
+
+        document.addEventListener("click", function (event) {
+            if (!menu.contains(event.target)) setOpen(false);
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") setOpen(false);
         });
     }
 
-    /* ---------- 3. Logout modal ---------- */
+    // Logout modal (any element with data-logout)
+    function setupLogoutModal() {
+        var modal = document.getElementById("logout-modal");
+        if (!modal) return;
 
-    function setupLogoutModal(modal) {
-        var logoutButton = document.getElementById("logout-button");
         var closeButton = document.getElementById("close-logout-modal");
         var cancelButton = document.getElementById("cancel-logout");
         var confirmButton = document.getElementById("confirm-logout");
-
-        if (!logoutButton || !modal) return;
-
         var lastFocused = null;
 
         function openModal() {
@@ -121,9 +137,11 @@
             if (lastFocused && lastFocused.focus) lastFocused.focus();
         }
 
-        logoutButton.addEventListener("click", function (event) {
-            event.preventDefault();
-            openModal();
+        document.querySelectorAll("[data-logout]").forEach(function (link) {
+            link.addEventListener("click", function (event) {
+                event.preventDefault();
+                openModal();
+            });
         });
 
         [closeButton, cancelButton].forEach(function (button) {
@@ -136,14 +154,13 @@
 
         if (confirmButton) {
             confirmButton.addEventListener("click", function () {
+                // The real sign-out: logout.php needs this POST form (it carries the CSRF token)
                 document.getElementById("logout-form").submit();
             });
         }
 
         document.addEventListener("keydown", function (event) {
-            if (event.key === "Escape" && modal.classList.contains("show")) {
-                closeModal();
-            }
+            if (event.key === "Escape" && modal.classList.contains("show")) closeModal();
         });
     }
 })();

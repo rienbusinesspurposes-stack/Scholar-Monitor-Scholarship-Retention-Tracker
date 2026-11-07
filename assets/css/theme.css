@@ -1,45 +1,29 @@
-/* =====================================================
-   THEME — colors, sizes, and motion tokens
-   Palette: crimson red, dark grey, white, black
-   Change colors here and the whole portal follows.
-===================================================== */
+/* Theme: BALUQ palette */
 
 :root {
-    /* Brand */
-    --crimson:        #A4162A;
-    --crimson-dark:   #7A1020;
-    --crimson-light:  #FBEAED;
+    /* Core palette */
+    --midnight:     #2D4E71;   /* sidebar, primary buttons, banners */
+    --pastel:       #AABED6;   /* hover, active accents, tints */
+    --white:        #FFFFFF;   /* headings, neutrals */
+    --muted:        #B9B6AD;   /* muted text */
+    --charcoal:     #1E1E1E;   /* cards, borders */
+    --black:        #111111;   /* page background */
 
-    /* Greys */
-    --charcoal:       #1E1E1E;   /* sidebar */
-    --graphite:       #2E2E2E;   /* sidebar hover */
-    --dark-grey:      #4A4A4A;
-    --grey:           #6E6E6E;   /* muted text */
-    --grey-light:     #E4E4E4;   /* borders */
-    --grey-bg:        #F4F4F4;   /* page background */
+    /* Status (meaning only) */
+    --danger:       #E4472F;   /* urgent, missing */
+    --success:      #40916C;   /* completed, active */
+    --warning:      #F2D36B;   /* pending, new */
 
-    /* Neutrals */
-    --white:          #FFFFFF;
-    --black:          #111111;
-    --text:           #1E1E1E;
-
-    /* Status (used sparingly for meaning only) */
-    --success:        #1F7A45;
-    --success-bg:     #E7F4EC;
-    --warning:        #9A6700;
-    --warning-bg:     #FFF4D6;
-
-    /* Shape & depth */
-    --radius:         10px;
-    --radius-sm:      6px;
-    --shadow-sm:      0 1px 2px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.04);
-    --shadow-md:      0 8px 24px rgba(0, 0, 0, 0.10);
+    /* Shape and depth */
+    --radius:       10px;
+    --radius-sm:    6px;
+    --shadow-md:    0 12px 32px rgba(0, 0, 0, 0.5);
 
     /* Layout */
-    --sidebar-width:  260px;
-    --header-height:  76px;
+    --sidebar-width: 260px;
+    --header-height: 72px;
 
     /* Motion */
-    --ease:           cubic-bezier(0.4, 0, 0.2, 1);
-    --duration:       0.25s;
+    --ease:         cubic-bezier(0.4, 0, 0.2, 1);
+    --duration:     0.2s;
 }

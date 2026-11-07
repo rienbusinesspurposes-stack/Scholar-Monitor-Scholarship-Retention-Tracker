@@ -24,33 +24,29 @@ if ($scholar) {
 $today = new DateTimeImmutable('today');
 ?>
 
-            <section class="dashboard-content">
+                <div class="page-header">
+                    <p class="section-label">BALUQ: Student Portal</p>
+                    <h1>Deadlines</h1>
+                    <p>Upcoming scholarship submission dates.</p>
+                </div>
 
                 <section class="content-panel">
-
-                    <div class="panel-header">
-                        <div>
-                            <h2>Your Deadlines</h2>
-                            <p>Required documents with a due date</p>
-                        </div>
-                        <a href="documents.php">My Documents</a>
-                    </div>
 
                     <?php foreach ($rows as $row):
                         $due  = new DateTimeImmutable($row['due_date']);
                         $days = (int) $today->diff($due)->format('%r%a');
                         if ($row['status'] === 'Approved') {
-                            [$tag, $tagClass] = ['Approved', 'deadline-normal'];
+                            [$tag, $tagClass] = ['Approved', 'is-done'];
                         } elseif ($row['status'] === 'Submitted') {
-                            [$tag, $tagClass] = ['Submitted, waiting for review', 'deadline-normal'];
+                            [$tag, $tagClass] = ['Submitted, waiting for review', 'is-done'];
                         } elseif ($row['status'] === 'Rejected') {
-                            [$tag, $tagClass] = ['Rejected, please upload again', 'deadline-warning'];
+                            [$tag, $tagClass] = ['Rejected, upload again', 'is-urgent'];
                         } elseif ($days < 0) {
-                            [$tag, $tagClass] = ['Overdue', 'deadline-warning'];
-                        } elseif ($days <= 7) {
-                            [$tag, $tagClass] = ['Due soon', 'deadline-warning'];
+                            [$tag, $tagClass] = ['Overdue by ' . -$days . ($days === -1 ? ' day' : ' days'), 'is-urgent'];
+                        } elseif ($days === 0) {
+                            [$tag, $tagClass] = ['Due today', 'is-urgent'];
                         } else {
-                            [$tag, $tagClass] = ['Upcoming', 'deadline-normal'];
+                            [$tag, $tagClass] = ['Due in ' . $days . ($days === 1 ? ' day' : ' days'), $days <= 7 ? 'is-urgent' : ''];
                         }
                     ?>
                     <article class="deadline-item">
@@ -60,15 +56,13 @@ $today = new DateTimeImmutable('today');
                         </div>
                         <div class="deadline-details">
                             <h3><?= e($row['name']) ?></h3>
-                            <p>Required document, due <?= e($due->format('F j, Y')) ?></p>
-                            <span class="<?= $tagClass ?>"><?= $tag ?></span>
+                            <p>Required document · due <?= e($due->format('F j, Y')) ?></p>
                         </div>
+                        <span class="deadline-days <?= $tagClass ?>"><?= $tag ?></span>
                     </article>
                     <?php endforeach; ?>
                     <?php if (!$rows): ?><p>No deadlines right now.</p><?php endif; ?>
 
                 </section>
-
-            </section>
 
 <?php require __DIR__ . '/../includes/user_footer.php'; ?>
