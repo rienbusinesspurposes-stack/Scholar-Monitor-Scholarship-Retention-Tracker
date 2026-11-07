@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | BALUQ</title>
+
+    <!-- Session guard -->
+    <script src="assets/js/auth.js"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+
+    <!-- CSS styles -->
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/layout.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <!-- Sidebar navigation -->
+        <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+
+            <div class="sidebar-brand">
+                <img src="assets/images/BALUQ-LOGO-Q.png" alt="BaluQ logo" class="brand-logo">
+                <div class="brand-info">
+                    <h2>BALUQ</h2>
+                    <p>Scholarship Monitoring</p>
+                </div>
+            </div>
+
+            <nav class="sidebar-navigation" aria-label="Student pages">
+
+                <p class="nav-heading">MAIN MENU</p>
+                <ul class="nav-list">
+                    <li>
+                        <a href="index.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🏠︎</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="scholarship.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🎖</span>
+                            <span>My Scholarship</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="academics-record.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🗒</span>
+                            <span>Academics Record</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="documents.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">✉</span>
+                            <span>Documents</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="notifications.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🛎</span>
+                            <span>Notifications</span>
+                            <span class="notification-count" aria-label="2 unread">2</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="deadlines.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🗓</span>
+                            <span>Deadlines</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <p class="nav-heading">ACCOUNT</p>
+                <ul class="nav-list">
+                    <li>
+                        <a href="profile.php" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">𐀪</span>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="settings.php" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">⛯</span>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="#" class="logout-link" data-logout>
+                    <span aria-hidden="true">➜]</span>
+                    <span>Log Out</span>
+                </a>
+                <div class="sidebar-version">
+                    <p>© <span data-year></span> MCC BALUQ</p>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- Mobile backdrop -->
+        <div class="sidebar-backdrop" aria-hidden="true"></div>
+
+
+        <main class="main-content">
+
+            <!-- Top bar -->
+            <header class="top-header">
+                <div class="header-left"> 
+                    <h3>Mabalacat City College</h3>
+                    <p>BALUQ: Scholarship Portal</p>
+                </div>
+                <div class="header-right">
+                    <a href="notifications.html" class="header-notification" aria-label="Notifications, 2 unread">
+                        🔔
+                        <span class="notification-badge">2</span>
+                    </a>
+                    <button type="button" class="menu-toggle" aria-controls="sidebar"
+                            aria-expanded="true" aria-label="Hide navigation menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </header>
+
+
+            <!-- Page content -->
+            <section class="page-content">
+                <!-- Welcome banner -->
+                <section class="welcome-banner">
+                    <div>
+                        <p class="section-label">STUDENT DASHBOARD</p>
+                        <h1 id="welcome-message">Welcome!</h1>
+                        <p class="welcome-tagline">Ing abante mu, ing bukas mu.</p>
+                    </div>
+                </section>
+
+                <!-- Wireframe grid: profile and overview -->
+                <div class="wire-grid">
+
+                    <div class="wire-col">
+                        <div class="wire-pill">ACADEMIC YEAR (2026–2027)</div>
+
+                        <section class="card profile-card wire-profile" aria-label="Student profile summary">
+                            <div class="profile-avatar" aria-hidden="true">JD</div>
+                            <h2 class="profile-name">Juan dela Cruz</h2>
+                            <p class="profile-meta">Student No.: 1427</p>
+                            <p class="profile-meta">BS Information Technology</p>
+                            <span class="profile-badge">Officially Enrolled</span>
+                        </section>
+
+                        <section class="card office-card" aria-label="School office hours">
+                            <h2 class="card-title">School Office Hours</h2>
+                            <div class="hours-row"><strong>Registrar</strong><span>Mon–Fri, 8:00 AM – 5:00 PM</span></div>
+                            <div class="hours-row"><strong>Finance</strong><span>Mon–Fri, 8:00 AM – 4:00 PM</span></div>
+                            <div class="hours-row"><strong>Scholarship Office</strong><span>Mon–Fri, 9:00 AM – 4:00 PM</span></div>
+                        </section>
+                    </div>
+
+                    <div class="wire-col">
+                        <div class="wire-pill">OVERVIEW</div>
+
+                        <article class="summary-card wire-card">
+                            <span class="card-label">Scholarship Status</span>
+                            <h3><span class="status-active">Active</span></h3>
+                            <p>Your scholarship is active this academic year.</p>
+                        </article>
+
+                        <article class="summary-card wire-card">
+                            <span class="card-label">Current GWA</span>
+                            <h3>1.75</h3>
+                            <p>Latest recorded academic performance.</p>
+                        </article>
+
+                        <article class="summary-card wire-card">
+                            <span class="card-label">Missing Documents</span>
+                            <h3><span class="status-danger">1</span></h3>
+                            <p>Document requiring your attention.</p>
+                            <a href="documents.html" class="card-link">View documents →</a>
+                        </article>
+
+                        <article class="summary-card wire-card">
+                            <span class="card-label">Upcoming Deadlines</span>
+                            <h3>2</h3>
+                            <p>Requirements with upcoming due dates.</p>
+                            <a href="deadlines.html" class="card-link">View deadlines →</a>
+                        </article>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <footer class="main-footer">
+                <p>© <span data-year></span> MCC BALUQ Student Scholarship Monitoring System</p>
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <!-- Logout modal -->
+    <div class="modal-overlay" id="logout-modal" role="dialog" aria-modal="true"
+         aria-labelledby="logout-title" aria-hidden="true">
+        <div class="modal-box">
+
+            <button type="button" class="modal-close" id="close-logout-modal" aria-label="Close">&times;</button>
+
+            <div class="logout-modal-icon" aria-hidden="true">➜]</div>
+
+            <h2 id="logout-title">Log out?</h2>
+            <p>Are you sure you want to log out of your BALUQ account?</p>
+
+            <div class="logout-modal-actions">
+                <button type="button" class="cancel-button" id="cancel-logout">Cancel</button>
+                <button type="button" class="confirm-logout-button" id="confirm-logout">Yes, Log Out</button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- JavaScript here -->
+    <script src="assets/js/nav.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+
+</body>
+
+</html>

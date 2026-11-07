@@ -1,0 +1,92 @@
+/* Base */
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: 'Nunito', 'Segoe UI', system-ui, sans-serif;
+    background: var(--black);
+    color: var(--white);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+a {
+    color: inherit;
+}
+
+button {
+    font: inherit;
+}
+
+h1, h2, h3 {
+    color: var(--white);
+    line-height: 1.25;
+}
+
+/* Focus ring */
+:focus-visible {
+    outline: 3px solid var(--pastel);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+/* Main Font */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Headings */
+h1, h2, h3, h4 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+}
+
+/* BALUQ Logo */
+.logo-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+}
+
+/* Buttons */
+button {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+}
