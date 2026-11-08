@@ -44,15 +44,6 @@ $parts   = preg_split('/\s+/', trim((string) $user['full_name']));
 $initials = mb_strtoupper(mb_substr($parts[0], 0, 1) . (count($parts) > 1 ? mb_substr(end($parts), 0, 1) : ''));
 $firstName = $parts[0];
 
-$statusLabel = ['None' => 'No Record', 'Pending' => 'Pending', 'Active' => 'Active', 'AtRisk' => 'At Risk', 'Ineligible' => 'Ineligible', 'Ended' => 'Ended'];
-$statusText  = [
-    'None'       => 'No scholarship record is linked to your account yet.',
-    'Pending'    => 'Waiting for staff to verify your scholarship.',
-    'Active'     => 'Your scholarship is currently active.',
-    'AtRisk'     => 'Your grade is close to the minimum. Keep it up.',
-    'Ineligible' => 'Your grade is below the minimum for your scholarship.',
-    'Ended'      => 'Your scholarship has ended.',
-];
 ?>
 
                 <!-- Welcome banner -->
@@ -75,7 +66,7 @@ $statusText  = [
                             <h2 class="profile-name"><?= e($user['full_name']) ?></h2>
                             <p class="profile-meta">Student No.: <?= e($scholar['student_number'] ?? '—') ?></p>
                             <p class="profile-meta"><?= $program ? e($program) : 'No scholarship program yet' ?></p>
-                            <span class="profile-badge"><?= e($statusLabel[$status]) ?></span>
+                            <span class="profile-badge"><?= e(STATUS_LABEL[$status]) ?></span>
                         </section>
 
                         <section class="card office-card" aria-label="School office hours">
@@ -91,8 +82,8 @@ $statusText  = [
 
                         <article class="summary-card wire-card">
                             <span class="card-label">Scholarship Status</span>
-                            <h3><span class="<?= $status === 'Active' ? 'status-active' : ($status === 'Ineligible' ? 'status-danger' : 'status-warning') ?>"><?= e($statusLabel[$status]) ?></span></h3>
-                            <p><?= e($statusText[$status]) ?></p>
+                            <h3><span class="<?= $status === 'Active' ? 'status-active' : ($status === 'Ineligible' ? 'status-danger' : 'status-warning') ?>"><?= e(STATUS_LABEL[$status]) ?></span></h3>
+                            <p><?= e(STATUS_TEXT[$status]) ?></p>
                         </article>
 
                         <article class="summary-card wire-card">

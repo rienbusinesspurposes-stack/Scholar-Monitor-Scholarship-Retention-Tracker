@@ -15,7 +15,6 @@ if ($scholar) {
     $stmt->execute([$scholar['program_id']]);
     $program = $stmt->fetchColumn() ?: null;
 }
-$statusLabel = ['Pending' => 'Pending', 'Active' => 'Active', 'AtRisk' => 'At Risk', 'Ineligible' => 'Ineligible', 'Ended' => 'Ended'];
 $parts    = preg_split('/\s+/', trim((string) $user['full_name']));
 $initials = mb_strtoupper(mb_substr($parts[0], 0, 1) . (count($parts) > 1 ? mb_substr(end($parts), 0, 1) : ''));
 ?>
@@ -33,7 +32,7 @@ $initials = mb_strtoupper(mb_substr($parts[0], 0, 1) . (count($parts) > 1 ? mb_s
                         <h2 class="profile-name"><?= e($user['full_name']) ?></h2>
                         <p class="profile-meta">Student No.: <?= e($scholar['student_number'] ?? '—') ?></p>
                         <p class="profile-meta"><?= $program ? e($program) : 'No scholarship program yet' ?></p>
-                        <?php if ($scholar): ?><span class="profile-badge"><?= e($statusLabel[$scholar['status']] ?? $scholar['status']) ?></span><?php endif; ?>
+                        <?php if ($scholar): ?><span class="profile-badge"><?= e(STATUS_LABEL[$scholar['status']] ?? $scholar['status']) ?></span><?php endif; ?>
                     </section>
 
                     <section class="content-panel">

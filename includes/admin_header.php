@@ -4,13 +4,6 @@
 // requireRole(['Admin','SuperAdmin']), sets $user and $pageTitle, then includes this file.
 // includes/admin_footer.php closes everything opened here.
 
-if (!function_exists('e')) {
-    function e(?string $text): string
-    {
-        return htmlspecialchars((string) $text, ENT_QUOTES);
-    }
-}
-
 $navItems = [
     'dashboard.php' => ['🏠︎', 'Dashboard'],
     'scholars.php'  => ['🎓', 'Scholars'],

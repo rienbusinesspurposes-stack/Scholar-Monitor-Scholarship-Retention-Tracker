@@ -4,11 +4,6 @@
 // sets $user and $pageTitle, then includes this file. It leaves $scholar (null if the account has none) and $unread for the page.
 // includes/user_footer.php closes everything opened here.
 
-function e(?string $text): string
-{
-    return htmlspecialchars((string) $text, ENT_QUOTES);
-}
-
 $stmt = $pdo->prepare('SELECT id, program_id, student_number, status FROM scholars WHERE user_id = ?');
 $stmt->execute([$user['id']]);
 $scholar = $stmt->fetch() ?: null;

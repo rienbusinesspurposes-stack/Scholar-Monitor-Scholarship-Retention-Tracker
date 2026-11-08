@@ -19,18 +19,9 @@
     color: var(--white);
 }
 
-.req-status.is-rejected {
-    background: var(--danger);
-    color: var(--white);
-}
-
 /* Deadline tags used in the deadline list */
 .deadline-days.is-done {
     color: var(--success);
-}
-
-.deadline-days.is-late {
-    color: var(--danger);
 }
 
 /* Form messages (flash) */

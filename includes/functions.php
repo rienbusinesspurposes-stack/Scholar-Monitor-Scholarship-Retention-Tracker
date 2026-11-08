@@ -1,8 +1,22 @@
 <?php
-// Shared helpers: roles, redirects, the logged-in user and the role guards.
+// Shared helpers: escaping, status text, redirects, the logged-in user and the role guards.
 // Load config/database.php and includes/security.php first.
 
-const ROLES = ['SuperAdmin', 'Admin', 'User'];
+// What a scholar's status is called and explained to the student.
+const STATUS_LABEL = ['None' => 'No Record', 'Pending' => 'Pending', 'Active' => 'Active', 'AtRisk' => 'At Risk', 'Ineligible' => 'Ineligible', 'Ended' => 'Ended'];
+const STATUS_TEXT  = [
+    'None'       => 'No scholarship record is linked to your account yet.',
+    'Pending'    => 'Waiting for staff to verify your scholarship.',
+    'Active'     => 'Your scholarship is currently active.',
+    'AtRisk'     => 'Your grade is close to the minimum. Keep it up.',
+    'Ineligible' => 'Your grade is below the minimum for your scholarship.',
+    'Ended'      => 'Your scholarship has ended.',
+];
+
+function e(?string $text): string
+{
+    return htmlspecialchars((string) $text, ENT_QUOTES);
+}
 
 function homeFor(string $role): string
 {

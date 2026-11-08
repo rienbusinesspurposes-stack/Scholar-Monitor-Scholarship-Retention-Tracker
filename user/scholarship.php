@@ -42,15 +42,6 @@ if ($scholar) {
 $year = (int) date('Y') - ((int) date('n') < 6 ? 1 : 0); // academic year runs June to May
 $hasGrade = $gwa !== false && $gwa !== null;
 
-$statusLabel = ['None' => 'No Record', 'Pending' => 'Pending', 'Active' => 'Active', 'AtRisk' => 'At Risk', 'Ineligible' => 'Ineligible', 'Ended' => 'Ended'];
-$statusText  = [
-    'None'       => 'No scholarship record is linked to your account yet.',
-    'Pending'    => 'Waiting for staff to verify your scholarship.',
-    'Active'     => 'Your scholarship is currently active.',
-    'AtRisk'     => 'Your grade is close to the minimum. Keep it up.',
-    'Ineligible' => 'Your grade is below the minimum for your scholarship.',
-    'Ended'      => 'Your scholarship has ended.',
-];
 ?>
 
                 <div class="page-header">
@@ -67,16 +58,16 @@ $statusText  = [
                         <div class="req-row"><span>Scholarship</span><span><?= e($program['name']) ?></span></div>
                         <div class="req-row"><span>Academic Year</span><span><?= $year ?>–<?= $year + 1 ?></span></div>
                         <div class="req-row"><span>Student Number</span><span><?= e($scholar['student_number']) ?></span></div>
-                        <div class="req-row"><span>Status</span><span class="req-status <?= $status === 'Active' ? 'is-done' : ($status === 'Ineligible' ? 'is-missing' : 'is-pending') ?>"><?= e($statusLabel[$status]) ?></span></div>
+                        <div class="req-row"><span>Status</span><span class="req-status <?= $status === 'Active' ? 'is-done' : ($status === 'Ineligible' ? 'is-missing' : 'is-pending') ?>"><?= e(STATUS_LABEL[$status]) ?></span></div>
                         <div class="req-row"><span>Minimum Average</span><span><?= number_format((float) $program['min_grade'], 2) ?></span></div>
                         <div class="req-row"><span>Latest Average</span><span><?= $hasGrade ? number_format((float) $gwa, 2) : '—' ?></span></div>
                         <div class="req-row"><span>Verified</span><span><?= $program['verified_at'] ? e(date('F j, Y', strtotime($program['verified_at']))) : 'Not yet' ?></span></div>
-                        <p class="panel-note"><?= e($statusText[$status]) ?>
+                        <p class="panel-note"><?= e(STATUS_TEXT[$status]) ?>
                             Your status becomes At Risk when your average is less than <?= number_format((float) $program['warning_margin'], 2) ?> points above the minimum, and Ineligible when it falls below it.</p>
                         <?php if ($program['description']): ?><p class="panel-note"><?= e($program['description']) ?></p><?php endif; ?>
                         <a href="academics-record.php" class="card-link">View grade history →</a>
                         <?php else: ?>
-                        <p><?= e($statusText['None']) ?></p>
+                        <p><?= e(STATUS_TEXT['None']) ?></p>
                         <?php endif; ?>
                     </section>
 
