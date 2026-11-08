@@ -13,6 +13,13 @@ $navItems = [
     'requirements.php' => ['📌', 'Requirements'],
 ];
 $roleLabel = $user['role'] === 'SuperAdmin' ? 'Super Admin' : 'Admin';
+
+// Pages live in admin/ or super_admin/, so links to the other folder start with ../. A Super Admin's Dashboard is theirs.
+$isSuper = $user['role'] === 'SuperAdmin';
+$inSuper = basename(dirname($_SERVER['SCRIPT_FILENAME'])) === 'super_admin';
+$staffDir = $inSuper ? '../admin/' : '';
+$superDir = $inSuper ? '' : '../super_admin/';
+$superItems = ['users.php' => ['👥', 'Users'], 'audit.php' => ['🛡', 'Audit log']];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,13 +63,27 @@ $roleLabel = $user['role'] === 'SuperAdmin' ? 'Super Admin' : 'Admin';
                 <ul class="nav-list">
                     <?php foreach ($navItems as $href => [$icon, $label]): ?>
                     <li>
-                        <a href="<?= $href ?>" class="nav-link">
+                        <a href="<?= ($isSuper && $href === 'dashboard.php' ? $superDir : $staffDir) . $href ?>" class="nav-link">
                             <span class="nav-icon" aria-hidden="true"><?= $icon ?></span>
                             <span><?= $label ?></span>
                         </a>
                     </li>
                     <?php endforeach; ?>
                 </ul>
+
+                <?php if ($isSuper): ?>
+                <p class="nav-heading">SUPER ADMIN</p>
+                <ul class="nav-list">
+                    <?php foreach ($superItems as $href => [$icon, $label]): ?>
+                    <li>
+                        <a href="<?= $superDir . $href ?>" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true"><?= $icon ?></span>
+                            <span><?= $label ?></span>
+                        </a>
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+                <?php endif; ?>
 
             </nav>
 
