@@ -82,6 +82,9 @@ try {
     $noisy = [];
     foreach (['config', 'includes', 'tools'] as $dir) {
         foreach (glob("$root/$dir/*.php") as $file) {
+            if (preg_match('/_(header|footer)\.php\z/', $file)) {
+                continue; // the page templates are HTML on purpose
+            }
             foreach (token_get_all(file_get_contents($file)) as $token) {
                 if (is_array($token) && in_array($token[0], [T_INLINE_HTML, T_CLOSE_TAG], true)) {
                     $noisy[] = "$dir/" . basename($file);

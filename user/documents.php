@@ -14,7 +14,7 @@ function saveDocument(array $scholar, int $userId, int $requirementId, ?array $f
     if ($scholar['status'] === 'Ended') {
         return 'Your scholarship has ended, so documents can no longer be submitted.';
     }
-    $stmt = $pdo->prepare('SELECT id FROM document_requirements WHERE id = ? AND program_id = ?');
+    $stmt = $pdo->prepare('SELECT id FROM document_requirements WHERE id = ? AND program_id = ? AND is_active = 1');
     $stmt->execute([$requirementId, $scholar['program_id']]);
     if (!$stmt->fetch()) {
         return 'Choose one of the listed requirements.';
@@ -103,7 +103,7 @@ if ($scholar) {
         'SELECT r.id, r.name, r.description, r.due_date, d.status, d.original_name, d.note
          FROM document_requirements r
          LEFT JOIN scholar_documents d ON d.requirement_id = r.id AND d.scholar_id = ?
-         WHERE r.program_id = ?
+         WHERE r.program_id = ? AND r.is_active = 1
          ORDER BY r.due_date IS NULL, r.due_date, r.name'
     );
     $stmt->execute([$scholar['id'], $scholar['program_id']]);

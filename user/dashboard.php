@@ -24,7 +24,7 @@ if ($scholar) {
         "SELECT r.name, r.due_date
          FROM document_requirements r
          LEFT JOIN scholar_documents d ON d.requirement_id = r.id AND d.scholar_id = ?
-         WHERE r.program_id = ? AND (d.id IS NULL OR d.status = 'Rejected')
+         WHERE r.program_id = ? AND r.is_active = 1 AND (d.id IS NULL OR d.status = 'Rejected')
          ORDER BY r.due_date IS NULL, r.due_date"
     );
     $stmt->execute([$scholar['id'], $scholar['program_id']]);

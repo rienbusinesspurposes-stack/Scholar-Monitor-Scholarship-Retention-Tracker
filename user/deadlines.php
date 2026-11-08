@@ -15,7 +15,7 @@ if ($scholar) {
         "SELECT r.name, r.due_date, d.status
          FROM document_requirements r
          LEFT JOIN scholar_documents d ON d.requirement_id = r.id AND d.scholar_id = ?
-         WHERE r.program_id = ? AND r.due_date IS NOT NULL
+         WHERE r.program_id = ? AND r.is_active = 1 AND r.due_date IS NOT NULL
          ORDER BY COALESCE(d.status IN ('Submitted', 'Approved'), 0), r.due_date, r.name"
     );
     $stmt->execute([$scholar['id'], $scholar['program_id']]);

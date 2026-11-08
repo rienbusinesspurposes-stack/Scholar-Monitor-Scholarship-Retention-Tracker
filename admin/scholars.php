@@ -179,7 +179,7 @@ require __DIR__ . '/../includes/admin_header.php';
                 <tbody>
                     <?php foreach ($allScholars as $row): ?>
                     <tr>
-                        <td><?= e($row['full_name']) ?></td>
+                        <td><a href="scholar.php?id=<?= (int) $row['id'] ?>" class="card-link"><?= e($row['full_name']) ?></a></td>
                         <td><?= e($row['student_number']) ?></td>
                         <td><?= e($row['program_name']) ?></td>
                         <td><span class="req-status <?= match ($row['status']) { 'Active' => 'is-done', 'Ineligible' => 'is-missing', default => 'is-pending' } ?>"><?= $row['status'] === 'AtRisk' ? 'At Risk' : e($row['status']) ?></span></td>

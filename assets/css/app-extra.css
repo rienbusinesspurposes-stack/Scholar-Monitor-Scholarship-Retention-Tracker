@@ -69,6 +69,7 @@
 .upload-form input[type="number"],
 .stack-form select,
 .stack-form input[type="text"],
+.stack-form input[type="date"],
 .stack-form input[type="number"] {
     width: 100%;
     padding: 10px 12px;

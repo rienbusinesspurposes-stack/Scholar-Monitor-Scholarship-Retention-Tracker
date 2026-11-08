@@ -33,7 +33,7 @@ if ($scholar) {
         'SELECT r.name, d.status
          FROM document_requirements r
          LEFT JOIN scholar_documents d ON d.requirement_id = r.id AND d.scholar_id = ?
-         WHERE r.program_id = ?
+         WHERE r.program_id = ? AND r.is_active = 1
          ORDER BY r.due_date IS NULL, r.due_date, r.name'
     );
     $stmt->execute([$scholar['id'], $scholar['program_id']]);

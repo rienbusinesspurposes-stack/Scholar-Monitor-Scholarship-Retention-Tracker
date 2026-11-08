@@ -62,6 +62,24 @@ try {
     check('Pending is never changed by a grade', refreshScholarStatus($sid) === 'Pending' && $state() === 'Pending');
     $pdo->exec("UPDATE scholars SET status = 'Ended' WHERE id = $sid");
     check('Ended is never changed by a grade', refreshScholarStatus($sid) === 'Ended' && $state() === 'Ended');
+
+    // Ending and reinstating. The latest grade on file is 50, so a reinstated scholar must land on Ineligible.
+    $pdo->exec("UPDATE scholars SET status = 'Active', verified_at = NOW() WHERE id = $sid");
+    $ended = fn(string $column) => $pdo->query("SELECT $column FROM scholars WHERE id = $sid")->fetchColumn();
+    $notes = fn() => (int) $pdo->query("SELECT COUNT(*) FROM notifications WHERE user_id = $uid")->fetchColumn();
+    check('ending needs a reason', endScholarship($sid, '  ') !== null && $state() === 'Active');
+    check('a reason over 300 characters is refused', endScholarship($sid, str_repeat('x', 301)) !== null && $state() === 'Active');
+    check('ending a scholar that does not exist is refused', endScholarship(0, 'gone') !== null);
+    check('ending saves when and why', endScholarship($sid, 'Withdrew') === null && $state() === 'Ended'
+        && $ended('ended_reason') === 'Withdrew' && $ended('ended_at') !== null);
+    check('the student was notified once', $notes() === 1);
+    check('ending twice is refused and sends nothing more', endScholarship($sid, 'again') !== null && $notes() === 1 && $ended('ended_reason') === 'Withdrew');
+    check('reinstating applies the grade rule again', reinstateScholarship($sid) === null && $state() === 'Ineligible');
+    check('reinstating clears the ending', $ended('ended_at') === null && $ended('ended_reason') === null);
+    check('reinstating a scholarship that has not ended is refused', reinstateScholarship($sid) !== null);
+    check('ending again replaces its old alert instead of adding one', endScholarship($sid, 'Second') === null && $notes() === 2);
+    $pdo->exec("UPDATE scholars SET verified_at = NULL WHERE id = $sid");
+    check('a scholar who was never verified goes back to Pending', reinstateScholarship($sid) === null && $state() === 'Pending');
 } finally {
     $pdo->rollBack();
 }

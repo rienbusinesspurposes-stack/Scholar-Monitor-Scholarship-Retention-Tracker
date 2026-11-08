@@ -5,10 +5,12 @@
 // includes/admin_footer.php closes everything opened here.
 
 $navItems = [
-    'dashboard.php' => ['🏠︎', 'Dashboard'],
-    'scholars.php'  => ['🎓', 'Scholars'],
-    'grades.php'    => ['🗒', 'Grades'],
-    'documents.php' => ['✉', 'Documents'],
+    'dashboard.php'    => ['🏠︎', 'Dashboard'],
+    'scholars.php'     => ['🎓', 'Scholars'],
+    'grades.php'       => ['🗒', 'Grades'],
+    'documents.php'    => ['✉', 'Documents'],
+    'programs.php'     => ['📋', 'Programs'],
+    'requirements.php' => ['📌', 'Requirements'],
 ];
 $roleLabel = $user['role'] === 'SuperAdmin' ? 'Super Admin' : 'Admin';
 ?>
