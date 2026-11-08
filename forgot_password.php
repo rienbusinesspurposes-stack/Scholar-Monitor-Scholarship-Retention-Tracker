@@ -61,24 +61,105 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Forgot password - Scholar Monitor</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot password | MCC BaluQ</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS styles -->
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <link rel="stylesheet" href="assets/css/login.css">
+    <link rel="stylesheet" href="assets/css/app-extra.css">
 </head>
+
 <body>
-    <h1>Forgot your password?</h1>
-    <?php if ($sent): ?>
-        <p role="status">If that email address belongs to an account, we have sent a link to reset the password. It works for <?= RESET_LINK_MINUTES ?> minutes.</p>
-    <?php else: ?>
-        <?php if ($error !== ''): ?>
-            <p role="alert"><?= htmlspecialchars($error, ENT_QUOTES) ?></p>
-        <?php endif; ?>
-        <form method="post">
-            <?= csrf_field() ?>
-            <p><label>Email <input type="email" name="email" value="<?= htmlspecialchars($email, ENT_QUOTES) ?>" maxlength="255" required autocomplete="email"></label></p>
-            <p><button type="submit">Send reset link</button></p>
-        </form>
-    <?php endif; ?>
-    <p><a href="login.php">Back to log in</a></p>
+
+    <main class="login-container">
+
+        <!-- Left Branding Section -->
+        <section class="login-brand">
+            <img src="assets/images/BALUQ-LOGO-WHITE.png"
+                 alt="BaluQ Logo"
+                 class="login-logo">
+
+            <h1>MCC BaluQ</h1>
+
+            <p class="brand-tagline">
+                Ing abante mu, Ing bukas mu.
+            </p>
+
+            <div class="brand-message">
+                <h2>Your Scholarship Journey Starts Here!</h2>
+                <p>
+                    Monitor your academic progress, track scholarship
+                    requirements, and stay updated with important alerts.
+                </p>
+            </div>
+
+        </section>
+
+
+        <!-- Right Section -->
+        <section class="login-section">
+
+            <div class="login-card">
+
+                <div class="mobile-brand">
+                    <img src="assets/images/BALUQ-LOGO-Q.png"
+                         alt="BaluQ Logo"
+                         class="mobile-logo">
+
+                    <h2>"Balu Qu, iSKOLAR Qu"</h2>
+                </div>
+
+                <div class="login-heading">
+                    <span class="welcome-label">FORGOT PASSWORD?</span>
+                    <h2>Reset your password</h2>
+                    <p>Enter your email and we will send you a reset link.</p>
+                </div>
+
+                <?php if ($sent): ?>
+                <p class="login-success" role="status">If that email address belongs to an account, we have sent a link to reset the password. It works for <?= RESET_LINK_MINUTES ?> minutes.</p>
+                <?php else: ?>
+                <form method="post">
+                    <?= csrf_field() ?>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" value="<?= htmlspecialchars($email, ENT_QUOTES) ?>" maxlength="255" autocomplete="email" placeholder="Enter your email" required>
+                    </div>
+
+                    <?php if ($error !== ''): ?>
+                    <p class="login-error" role="alert"><?= htmlspecialchars($error, ENT_QUOTES) ?></p>
+                    <?php endif; ?>
+
+                    <button type="submit" class="login-button">Send reset link</button>
+                </form>
+                <?php endif; ?>
+
+                <div class="login-divider">
+                    <span>STUDENT PORTAL</span>
+                </div>
+
+                <p class="login-help">
+                    <a href="login.php">Back to log in</a>
+                </p>
+
+            </div>
+
+            <footer class="login-footer">
+                © <span id="login-year"></span> BALUQ. All Rights Reserved.
+            </footer>
+
+        </section>
+
+    </main>
+
+    <script src="assets/js/login.js"></script>
+
 </body>
 </html>

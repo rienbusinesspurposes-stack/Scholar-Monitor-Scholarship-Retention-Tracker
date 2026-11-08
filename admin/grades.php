@@ -47,7 +47,7 @@ function recordGrade(int $adminId, int $scholarId, string $term, string $average
          FROM scholars WHERE id = ?
          ON DUPLICATE KEY UPDATE message = VALUES(message)"
     )->execute([
-        "Your grade for $term has been recorded: $average."
+        "Your grade for $term has been recorded: " . number_format((float) $average, 2) . "."
         . match ($newStatus) {
             'AtRisk'     => ' Your scholarship is now At Risk because the grade is close to the minimum.',
             'Ineligible' => ' Your scholarship is now Ineligible because the grade is below the minimum.',

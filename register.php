@@ -61,28 +61,127 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Create an account - Scholar Monitor</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create an account | MCC BaluQ</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS styles -->
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <link rel="stylesheet" href="assets/css/login.css">
+    <link rel="stylesheet" href="assets/css/app-extra.css">
 </head>
+
 <body>
-    <h1>Create an account</h1>
-    <?php if ($created): ?>
-        <p role="status">Your account was created. <a href="login.php">Log in</a> with your username and password. A code will be emailed to you each time.</p>
-    <?php else: ?>
-        <?php foreach ($errors as $message): ?>
-            <p role="alert"><?= htmlspecialchars($message, ENT_QUOTES) ?></p>
-        <?php endforeach; ?>
-        <form method="post">
-            <?= csrf_field() ?>
-            <p><label>Username <input type="text" name="username" value="<?= htmlspecialchars($username, ENT_QUOTES) ?>" maxlength="50" required autocomplete="username"></label></p>
-            <p><label>Email <input type="email" name="email" value="<?= htmlspecialchars($email, ENT_QUOTES) ?>" maxlength="255" required autocomplete="email"></label></p>
-            <p><label>Full name <input type="text" name="full_name" value="<?= htmlspecialchars($fullName, ENT_QUOTES) ?>" maxlength="150" required autocomplete="name"></label></p>
-            <p><label>Password (10 to 72 characters) <input type="password" name="password" maxlength="72" required autocomplete="new-password"></label></p>
-            <p><label>Password again <input type="password" name="password_again" maxlength="72" required autocomplete="new-password"></label></p>
-            <p><button type="submit">Create account</button></p>
-        </form>
-    <?php endif; ?>
-    <p><a href="login.php">Already have an account? Log in</a></p>
+
+    <main class="login-container">
+
+        <!-- Left Branding Section -->
+        <section class="login-brand">
+            <img src="assets/images/BALUQ-LOGO-WHITE.png"
+                 alt="BaluQ Logo"
+                 class="login-logo">
+
+            <h1>MCC BaluQ</h1>
+
+            <p class="brand-tagline">
+                Ing abante mu, Ing bukas mu.
+            </p>
+
+            <div class="brand-message">
+                <h2>Your Scholarship Journey Starts Here!</h2>
+                <p>
+                    Monitor your academic progress, track scholarship
+                    requirements, and stay updated with important alerts.
+                </p>
+            </div>
+
+        </section>
+
+
+        <!-- Right Section -->
+        <section class="login-section">
+
+            <div class="login-card">
+
+                <div class="mobile-brand">
+                    <img src="assets/images/BALUQ-LOGO-Q.png"
+                         alt="BaluQ Logo"
+                         class="mobile-logo">
+
+                    <h2>"Balu Qu, iSKOLAR Qu"</h2>
+                </div>
+
+                <div class="login-heading">
+                    <span class="welcome-label">JOIN BALUQ</span>
+                    <h2>Create an account</h2>
+                    <p>Sign up with your email. Your login codes are sent there.</p>
+                </div>
+
+                <?php if ($created): ?>
+                <p class="login-success" role="status">Your account was created. <a href="login.php">Log in</a> with your username and password. A code will be emailed to you each time.</p>
+                <?php else: ?>
+                <form method="post">
+                    <?= csrf_field() ?>
+
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" value="<?= htmlspecialchars($username, ENT_QUOTES) ?>" maxlength="50" autocomplete="username" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" value="<?= htmlspecialchars($email, ENT_QUOTES) ?>" maxlength="255" autocomplete="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="full_name">Full name</label>
+                        <input type="text" id="full_name" name="full_name" value="<?= htmlspecialchars($fullName, ENT_QUOTES) ?>" maxlength="150" autocomplete="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" maxlength="72" autocomplete="new-password" required>
+                    </div>
+                    <p class="login-hint">10 to 72 characters.</p>
+
+                    <div class="form-group">
+                        <label for="password_again">Password again</label>
+                        <input type="password" id="password_again" name="password_again" maxlength="72" autocomplete="new-password" required>
+                    </div>
+
+                    <?php foreach ($errors as $message): ?>
+                    <p class="login-error" role="alert"><?= htmlspecialchars($message, ENT_QUOTES) ?></p>
+                    <?php endforeach; ?>
+
+                    <button type="submit" class="login-button">Create account</button>
+                </form>
+                <?php endif; ?>
+
+                <div class="login-divider">
+                    <span>STUDENT PORTAL</span>
+                </div>
+
+                <p class="login-help">
+                    Already have an account?
+                    <a href="login.php">Log in</a>
+                </p>
+
+            </div>
+
+            <footer class="login-footer">
+                © <span id="login-year"></span> BALUQ. All Rights Reserved.
+            </footer>
+
+        </section>
+
+    </main>
+
+    <script src="assets/js/login.js"></script>
+
 </body>
 </html>

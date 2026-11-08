@@ -40,7 +40,7 @@ require __DIR__ . '/../includes/admin_header.php';
     <article class="summary-card"><span class="card-label">At risk</span><h3><span class="status-warning"><?= $counts['AtRisk'] ?></span></h3><p>Close to the minimum.</p></article>
     <article class="summary-card"><span class="card-label">Ineligible</span><h3><span class="status-danger"><?= $counts['Ineligible'] ?></span></h3><p>Below the minimum average.</p></article>
     <article class="summary-card"><span class="card-label">Ended</span><h3><?= $counts['Ended'] ?></h3><p>Scholarship has ended.</p></article>
-    <article class="summary-card"><span class="card-label">Documents awaiting review</span><h3><?= $awaitingReview ?></h3><p>Submitted by students.</p></article>
+    <article class="summary-card"><span class="card-label">Documents awaiting review</span><h3><?= $awaitingReview ?></h3><p>Submitted by students.</p><a href="documents.php" class="card-link">Review documents →</a></article>
 </div>
 
 <section class="content-panel panel-gap">

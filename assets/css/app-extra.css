@@ -121,3 +121,89 @@
     font-size: 12px;
     color: var(--muted);
 }
+
+/* Staff document review */
+.btn-danger {
+    background: var(--danger);
+    color: var(--white);
+}
+
+.btn-danger:hover {
+    background: var(--white);
+    color: var(--danger);
+}
+
+.review-item {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--midnight);
+}
+
+.review-item:last-child {
+    border-bottom: none;
+}
+
+.review-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.review-head h3 {
+    font-size: 15px;
+}
+
+.review-head p {
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.review-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.review-form input[type="text"] {
+    flex: 1 1 220px;
+    padding: 8px 10px;
+    border: 1px solid var(--midnight);
+    border-radius: var(--radius-sm);
+    background: var(--black);
+    color: var(--white);
+    font: inherit;
+    font-size: 13px;
+}
+
+/* Messages on the account pages (register, forgot and reset password) */
+.login-success {
+    margin-bottom: 14px;
+    color: var(--success);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.6;
+}
+
+.login-success a {
+    color: var(--pastel);
+}
+
+.login-hint {
+    margin: -6px 0 14px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* Text people type (reasons, file names, messages) must wrap instead of widening the page */
+.review-item,
+.document-note,
+.deadline-meta,
+.req-row span,
+.alert-details h3,
+.alert-details span,
+.panel-note {
+    overflow-wrap: anywhere;
+}
