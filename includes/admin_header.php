@@ -11,6 +11,7 @@ $navItems = [
     'documents.php'    => ['✉', 'Documents'],
     'programs.php'     => ['📋', 'Programs'],
     'requirements.php' => ['📌', 'Requirements'],
+    'reports.php'      => ['📊', 'Reports'],
 ];
 $roleLabel = $user['role'] === 'SuperAdmin' ? 'Super Admin' : 'Admin';
 
