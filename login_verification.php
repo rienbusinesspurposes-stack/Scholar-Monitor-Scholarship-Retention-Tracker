@@ -11,7 +11,7 @@ if (!$pending || $pending['expires'] < time()) {
     redirect('login.php');
 }
 
-$stmt = $pdo->prepare('SELECT id, email, role, is_active FROM users WHERE id = ?');
+$stmt = $pdo->prepare('SELECT id, email, role, is_active, password_hash FROM users WHERE id = ?');
 $stmt->execute([$pending['user_id']]);
 $account = $stmt->fetch();
 if (!$account || !$account['is_active']) {
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Enter the 6 digits from the email.';
         } elseif (verifyLoginConfirmation($id, $code)) {
             session_regenerate_id(true);
-            $_SESSION = ['user_id' => $id, 'last_activity' => time()];
+            $_SESSION = ['user_id' => $id, 'last_activity' => time(), 'pw_stamp' => passwordStamp($account['password_hash'])];
             clearFailedLogins($pending['identifier']);
             auditLog($id, 'login_ok');
             redirect(homeFor($account['role']));

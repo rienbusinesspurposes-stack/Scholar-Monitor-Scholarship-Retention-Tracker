@@ -138,6 +138,20 @@ try {
     clearFailedLogins($who);
     check('a successful login clears the failures', !loginIsLocked($who));
 
+    echo "-- One address trying many names\n";
+    run('DELETE FROM login_attempts WHERE ip_address = ?', [clientIp()]); // rolled back with everything else
+    for ($i = 0; $i < 60; $i++) {
+        recordFailedLogin('register:' . clientIp());
+    }
+    check('sign-up and reset throttle rows do not count as failed logins', !loginIsLocked('tc_fresh'));
+    for ($i = 1; $i < LOGIN_MAX_FAILS_PER_IP; $i++) {
+        recordFailedLogin("tc_spray_$i");
+    }
+    check('one failure short of the limit on different names: not locked', !loginIsLocked('tc_fresh'));
+    recordFailedLogin('tc_spray_last');
+    check('reaching the limit locks that address for every name', loginIsLocked('tc_fresh') && loginIsLocked('tc_other'));
+    run('DELETE FROM login_attempts WHERE ip_address = ?', [clientIp()]);
+
     echo "-- Emailed login codes\n";
     $u = makeUser();
     $code = createLoginConfirmation($u);
@@ -159,6 +173,17 @@ try {
     $other = makeUser();
     $code = createLoginConfirmation($u);
     check("one user's code does not work for another user", !verifyLoginConfirmation($other, $code) && verifyLoginConfirmation($u, $code));
+    $z = makeUser();
+    for ($round = 0; $round < LOGIN_CODE_HOURLY_TRIES / LOGIN_CODE_MAX_TRIES; $round++) {
+        createLoginConfirmation($z);
+        for ($i = 0; $i < LOGIN_CODE_MAX_TRIES; $i++) {
+            verifyLoginConfirmation($z, $wrong);
+        }
+    }
+    $code = createLoginConfirmation($z);
+    check('asking for new codes does not reset the limit: the hourly allowance is used up, so even the right code is refused', !verifyLoginConfirmation($z, $code));
+    run('UPDATE login_confirmations SET created_at = NOW() - INTERVAL 2 HOUR WHERE user_id = ?', [$z]);
+    check('the hourly limit ends once the tries are over an hour old', verifyLoginConfirmation($z, $code));
 
     echo "-- CSRF and audit log\n";
     $_SESSION = [];
@@ -194,6 +219,14 @@ try {
     check('a role changed in the database applies at once', (currentUser()['role'] ?? '') === 'User');
     run('UPDATE users SET is_active = 0 WHERE id = ?', [$id]);
     check('a deactivated account is logged out', currentUser() === null && empty($_SESSION['user_id']));
+    $p = makeUser();
+    $oldHash = run('SELECT password_hash FROM users WHERE id = ?', [$p])->fetch()['password_hash'];
+    $_SESSION = ['user_id' => $p, 'pw_stamp' => passwordStamp($oldHash)];
+    $mine = currentUser();
+    check('a session opened with the current password stays logged in', (int) ($mine['id'] ?? 0) === $p);
+    check('the password hash is never handed to the pages', $mine !== null && !array_key_exists('password_hash', $mine));
+    run('UPDATE users SET password_hash = ? WHERE id = ?', [password_hash('a new password 1', PASSWORD_DEFAULT), $p]);
+    check('after a password change the old session is logged out', currentUser() === null && empty($_SESSION['user_id']));
 
     $pdo->rollBack();
 } catch (Throwable $e) {

@@ -54,9 +54,11 @@ try {
     $doc = fn(int $rid, string $status) => $pdo->exec("INSERT INTO scholar_documents (scholar_id, requirement_id, stored_name, original_name, status) VALUES ($sid, $rid, 'zz$rid', 'zz.pdf', '$status')");
     $keys = fn(string $who = 'user') => $pdo->query('SELECT dedupe_key FROM notifications WHERE user_id = ' . ($who === 'user' ? $uid : $aid) . ' ORDER BY dedupe_key')->fetchAll(PDO::FETCH_COLUMN);
     $message = fn(string $key) => (string) $pdo->query("SELECT message FROM notifications WHERE user_id = $uid AND dedupe_key = '$key'")->fetchColumn();
+    // Only emails about the test scholar: other At Risk scholars already in the database also go into the digest.
     $toAdmin = function () use (&$mails): array { // by reference: $mails is replaced between runs
-        return array_values(array_filter($mails, fn($m) => $m['to'] === 'zz_alert_a@example.test'));
+        return array_values(array_filter($mails, fn($m) => $m['to'] === 'zz_alert_a@example.test' && str_contains($m['body'], 'ZZ-ALERT')));
     };
+    $staffRows = fn(string $extra = '') => (int) $pdo->query("SELECT COUNT(*) FROM notifications WHERE user_id = $aid AND dedupe_key LIKE 'staff\\_{$sid}\\_%' $extra")->fetchColumn();
 
     $soon = $req('Soon document', 'CURDATE() + INTERVAL 3 DAY');
     $late = $req('Overdue document', 'CURDATE() - INTERVAL 3 DAY');
@@ -117,7 +119,7 @@ try {
     check('the email gives the average and the minimum', str_contains($toAdmin()[0]['body'], '86.50') && str_contains($toAdmin()[0]['body'], '85.00'));
     check('a switched-off admin is not emailed', array_filter($mails, fn($m) => $m['to'] === 'zz_alert_off@example.test') === []);
     check('the run counts the emails sent', $r['staff'] >= 1);
-    check('the sent alert is recorded as already read', (int) $pdo->query("SELECT COUNT(*) FROM notifications WHERE user_id = $aid AND LEFT(dedupe_key, 6) = 'staff_' AND read_at IS NOT NULL")->fetchColumn() === 1);
+    check('the sent alert is recorded as already read', $staffRows('AND read_at IS NOT NULL') === 1);
     check('the student is not sent a grade alert by the job', count(array_filter($keys(), fn($k) => str_starts_with($k, 'staff_') || str_starts_with($k, 'grade_'))) === 0);
 
     $mails = [];
@@ -134,8 +136,7 @@ try {
     $mails = [];
     $r = runAlerts($fake);
     check('a failed email is counted', $r['failed'] >= 1 && count($toAdmin()) === 1);
-    $recorded = (int) $pdo->query("SELECT COUNT(*) FROM notifications WHERE user_id = $aid AND LEFT(dedupe_key, 6) = 'staff_'")->fetchColumn();
-    check('a failed email is not recorded as sent', $recorded === 2);
+    check('a failed email is not recorded as sent', $staffRows() === 2);
     $mailOk = true;
     $mails = [];
     runAlerts($fake);

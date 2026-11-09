@@ -16,6 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     enforceCsrfOnPost();
     $identifier = trim((string) ($_POST['identifier'] ?? ''));
     $password = (string) ($_POST['password'] ?? '');
+    if (str_contains($identifier, ':')) {
+        $identifier = ''; // no username or email has a colon, and the sign-up and reset throttles use colon keys, so typed text must never match one
+    }
 
     if (loginIsLocked($identifier)) {
         $error = 'Too many failed attempts. Please try again in a few minutes.';

@@ -86,14 +86,24 @@ function currentUser(): ?array
     if ($id < 1) {
         return null;
     }
-    $stmt = $pdo->prepare('SELECT id, username, email, full_name, role, is_active FROM users WHERE id = ?');
+    $stmt = $pdo->prepare('SELECT id, username, email, full_name, role, is_active, password_hash FROM users WHERE id = ?');
     $stmt->execute([$id]);
     $user = $stmt->fetch();
-    if (!$user || !$user['is_active']) {
+    // A password change (a reset link) ends every session opened with the old password.
+    // shortcut: a session without a stamp is not checked (only sessions older than this check, or tests); upgrade by requiring one.
+    $changed = $user && isset($_SESSION['pw_stamp']) && !hash_equals(passwordStamp($user['password_hash']), (string) $_SESSION['pw_stamp']);
+    if (!$user || !$user['is_active'] || $changed) {
         forceLogout();
         return null;
     }
+    unset($user['password_hash']);
     return $user;
+}
+
+// A short fingerprint of the stored password hash, kept in the session at login to notice a later password change.
+function passwordStamp(string $passwordHash): string
+{
+    return substr(hash('sha256', $passwordHash), 0, 16);
 }
 
 function forceLogout(): void

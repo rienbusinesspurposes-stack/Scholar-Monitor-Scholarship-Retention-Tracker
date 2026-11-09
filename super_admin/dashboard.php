@@ -13,7 +13,7 @@ foreach ($pdo->query('SELECT role, COUNT(*) AS total FROM users WHERE is_active 
     $roles[$row['role']] = (int) $row['total'];
 }
 $switchedOff = (int) $pdo->query('SELECT COUNT(*) FROM users WHERE is_active = 0')->fetchColumn();
-$failedToday = (int) $pdo->query("SELECT COUNT(*) FROM login_attempts WHERE identifier NOT LIKE 'register:%' AND attempted_at > NOW() - INTERVAL 1 DAY")->fetchColumn();
+$failedToday = (int) $pdo->query("SELECT COUNT(*) FROM login_attempts WHERE identifier NOT LIKE '%:%' AND attempted_at > NOW() - INTERVAL 1 DAY")->fetchColumn();
 $denied = (int) $pdo->query("SELECT COUNT(*) FROM security_audit_logs WHERE action = 'access_denied' AND created_at > NOW() - INTERVAL 7 DAY")->fetchColumn();
 
 $recent = $pdo->query(

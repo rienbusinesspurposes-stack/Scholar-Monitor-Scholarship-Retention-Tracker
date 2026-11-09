@@ -4,8 +4,10 @@
 
 const SESSION_IDLE_SECONDS = 1800; // log out after 30 idle minutes
 const LOGIN_MAX_FAILS      = 5;    // failures within an hour before a lockout starts
+const LOGIN_MAX_FAILS_PER_IP = 50; // failures on any names from one address within an hour
 const LOGIN_CODE_MINUTES   = 10;
 const LOGIN_CODE_MAX_TRIES = 5;
+const LOGIN_CODE_HOURLY_TRIES = 15; // across all of one account's codes, so asking for a new code does not reset the allowance
 
 function startSecureSession(): void
 {
@@ -109,6 +111,13 @@ function loginKey(string $identifier): string
 function loginIsLocked(string $identifier): bool
 {
     global $pdo;
+    // One address trying many different names (password spraying). Sign-up and reset throttle rows hold a colon and are not logins.
+    // shortcut: classmates behind one shared address share this limit, upgrade by raising LOGIN_MAX_FAILS_PER_IP if that ever bites.
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM login_attempts WHERE ip_address = ? AND identifier NOT LIKE '%:%' AND attempted_at > NOW() - INTERVAL 60 MINUTE");
+    $stmt->execute([clientIp()]);
+    if ((int) $stmt->fetchColumn() >= LOGIN_MAX_FAILS_PER_IP) {
+        return true;
+    }
     $stmt = $pdo->prepare(
         'SELECT COUNT(*) AS fails, TIMESTAMPDIFF(SECOND, MAX(attempted_at), NOW()) AS idle
          FROM login_attempts
@@ -155,6 +164,11 @@ function createLoginConfirmation(int $userId): string
 function verifyLoginConfirmation(int $userId, string $code): bool
 {
     global $pdo;
+    $stmt = $pdo->prepare('SELECT COALESCE(SUM(tries), 0) FROM login_confirmations WHERE user_id = ? AND created_at > NOW() - INTERVAL 60 MINUTE');
+    $stmt->execute([$userId]);
+    if ((int) $stmt->fetchColumn() >= LOGIN_CODE_HOURLY_TRIES) {
+        return false;
+    }
     $stmt = $pdo->prepare(
         'SELECT id, code_hash FROM login_confirmations
          WHERE user_id = ? AND used_at IS NULL AND expires_at > NOW()
