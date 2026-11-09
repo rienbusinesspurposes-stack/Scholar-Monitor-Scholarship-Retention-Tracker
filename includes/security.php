@@ -2,8 +2,9 @@
 // Session hardening, security headers, CSRF, audit log, login lockout and emailed login codes.
 // Load config/database.php first: these functions use its $pdo connection.
 
-const SESSION_IDLE_SECONDS = 1800; // log out after 30 idle minutes
-const LOGIN_MAX_FAILS      = 5;    // failures within an hour before a lockout starts
+require_once __DIR__ . '/settings.php'; // the idle logout time is a setting (session_idle_minutes)
+
+const LOGIN_MAX_FAILS      = 5;   // failures within an hour before a lockout starts
 const LOGIN_MAX_FAILS_PER_IP = 50; // failures on any names from one address within an hour
 const LOGIN_CODE_MINUTES   = 10;
 const LOGIN_CODE_MAX_TRIES = 5;
@@ -33,7 +34,7 @@ function startSecureSession(): void
     ]);
     session_start();
 
-    if (isset($_SESSION['last_activity']) && time() - $_SESSION['last_activity'] > SESSION_IDLE_SECONDS) {
+    if (isset($_SESSION['last_activity']) && time() - $_SESSION['last_activity'] > setting('session_idle_minutes') * 60) {
         $_SESSION = [];
         session_regenerate_id(true);
     }

@@ -1,12 +1,10 @@
 <?php
 // The alert job's logic, run once a day by tools/send_alerts.php.
 //  - Students get a reminder for each required document that is missing (never uploaded, or rejected) when its due date
-//    is within ALERT_DUE_SOON_DAYS, and once more when it is overdue.
+//    is within the alert_due_soon_days setting, and once more when it is overdue.
 //  - Staff (active Admins and Super Admins) get one email listing scholars who are At Risk or Ineligible on their latest grade.
 // Every alert has a key that names the problem, so the same problem is reported once and a changed one is reported again.
 // Load config/database.php, includes/security.php, includes/scholar_status.php and includes/mailer.php first.
-
-const ALERT_DUE_SOON_DAYS = 7;
 
 // Saves one alert. Returns true only when it is new. $read starts it as read: staff have no inbox page, so for them the
 // row is only the record that the email was sent.
@@ -43,7 +41,7 @@ function runAlerts(?callable $send = null): array
          FROM scholars s
          JOIN users u ON u.id = s.user_id AND u.is_active = 1
          JOIN document_requirements r ON r.program_id = s.program_id AND r.is_active = 1
-              AND r.due_date IS NOT NULL AND r.due_date <= CURDATE() + INTERVAL ' . ALERT_DUE_SOON_DAYS . " DAY
+              AND r.due_date IS NOT NULL AND r.due_date <= CURDATE() + INTERVAL ' . setting('alert_due_soon_days') . " DAY
          LEFT JOIN scholar_documents d ON d.scholar_id = s.id AND d.requirement_id = r.id
          WHERE s.status <> 'Ended' AND (d.id IS NULL OR d.status = 'Rejected')"
     )->fetchAll();

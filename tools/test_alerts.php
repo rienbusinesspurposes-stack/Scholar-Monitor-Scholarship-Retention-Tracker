@@ -64,7 +64,7 @@ try {
     $late = $req('Overdue document', 'CURDATE() - INTERVAL 3 DAY');
     $today = $req('Due today', 'CURDATE()');
     $far = $req('Far document', 'CURDATE() + INTERVAL 30 DAY');
-    $edge = $req('Edge document', 'CURDATE() + INTERVAL ' . ALERT_DUE_SOON_DAYS . ' DAY');
+    $edge = $req('Edge document', 'CURDATE() + INTERVAL ' . setting('alert_due_soon_days') . ' DAY');
     $undated = $req('No date document', null);
     $retired = $req('Retired document', 'CURDATE() + INTERVAL 2 DAY', 0);
     $done = $req('Approved document', 'CURDATE() + INTERVAL 2 DAY');

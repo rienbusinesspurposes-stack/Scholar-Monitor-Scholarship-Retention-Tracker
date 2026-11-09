@@ -20,7 +20,7 @@ $isSuper = $user['role'] === 'SuperAdmin';
 $inSuper = basename(dirname($_SERVER['SCRIPT_FILENAME'])) === 'super_admin';
 $staffDir = $inSuper ? '../admin/' : '';
 $superDir = $inSuper ? '' : '../super_admin/';
-$superItems = ['users.php' => ['👥', 'Users'], 'audit.php' => ['🛡', 'Audit log']];
+$superItems = ['users.php' => ['👥', 'Users'], 'audit.php' => ['🛡', 'Audit log'], 'settings.php' => ['⚙', 'Settings']];
 ?>
 <!DOCTYPE html>
 <html lang="en">
