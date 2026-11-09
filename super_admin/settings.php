@@ -1,66 +1,40 @@
 <?php
-// Settings a Super Admin can change (super_admin/settings.php). Each one is a whole number with a default and a safe range.
-// Needs sql/004_settings.sql; until that is run, or if a stored value is not valid, the default is used so no page ever breaks.
-// Load config/database.php first.
+// Settings: the few numbers a Super Admin can tune. Every change is written to the audit log.
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../includes/security.php';
+require_once __DIR__ . '/../includes/functions.php';
 
-// name => [default, lowest, highest, label, unit, help]
-const SETTINGS = [
-    'alert_due_soon_days'  => [7, 1, 60, 'Document reminders start', 'days before the due date', 'Students are reminded about a missing document this many days before it is due, and again once it is overdue.'],
-    'session_idle_minutes' => [30, 5, 240, 'Automatic logout after', 'minutes without activity', 'Anyone who does nothing for this long must log in again. Shorter is safer on shared computers.'],
-];
+$user = requireRole(['SuperAdmin']);
 
-// All stored values by name, read once per request. Pass true to read again after a change.
-function settingsStored(bool $reload = false): array
-{
-    global $pdo;
-    static $stored = null;
-    if ($stored === null || $reload) {
-        try {
-            $stored = $pdo->query('SELECT name, value FROM settings')->fetchAll(PDO::FETCH_KEY_PAIR);
-        } catch (PDOException $e) {
-            $stored = []; // the table is not there yet: use the defaults
+enforceCsrfOnPost();
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
+    $errors = [];
+    foreach (SETTINGS as $name => $info) {
+        $text = (string) ($_POST[$name] ?? '');
+        if ($text !== (string) setting($name) && ($error = saveSetting($user['id'], $name, $text))) {
+            $errors[] = $error;
         }
     }
-    return $stored;
+    $_SESSION['flash'] = $errors ? ['error', implode(' ', $errors)] : ['success', 'Settings saved.'];
+    redirect('super_admin/settings.php');
 }
 
-// Whole-number text inside the allowed range, or null.
-function settingValue(string $name, string $text): ?int
-{
-    [, $low, $high] = SETTINGS[$name];
-    $text = trim($text);
-    return ctype_digit($text) && strlen($text) <= 4 && (int) $text >= $low && (int) $text <= $high ? (int) $text : null;
-}
+$pageTitle = 'Settings';
+$pageIntro = 'Change how the system behaves. A change applies right away. The default is shown under each setting.';
+require __DIR__ . '/../includes/admin_header.php';
+?>
 
-function setting(string $name): int
-{
-    return settingValue($name, settingsStored()[$name] ?? '') ?? SETTINGS[$name][0];
-}
+<section class="content-panel">
+    <div class="panel-header"><div><h2>System settings</h2><p>Whole numbers only, within the range shown</p></div></div>
+    <form method="post" class="stack-form">
+        <?= csrf_field() ?>
+        <?php foreach (SETTINGS as $name => [$default, $low, $high, $label, $unit, $help]): ?>
+        <label for="<?= e($name) ?>"><?= e($label) ?> (<?= e($unit) ?>)</label>
+        <input type="number" name="<?= e($name) ?>" id="<?= e($name) ?>" required min="<?= $low ?>" max="<?= $high ?>" step="1" value="<?= setting($name) ?>">
+        <p class="panel-note"><?= e($help) ?> Default: <?= $default ?>. Allowed: <?= $low ?> to <?= $high ?>.</p>
+        <?php endforeach; ?>
+        <button type="submit" class="btn">Save settings</button>
+    </form>
+</section>
 
-// Saves one setting. Returns an error message, or null on success.
-function saveSetting(int $actorId, string $name, string $text): ?string
-{
-    global $pdo;
-    if (!isset(SETTINGS[$name])) {
-        return 'That setting does not exist.';
-    }
-    [, $low, $high, $label] = SETTINGS[$name];
-    $value = settingValue($name, $text);
-    if ($value === null) {
-        return "$label: enter a whole number from $low to $high.";
-    }
-    try {
-        $pdo->prepare(
-            'INSERT INTO settings (name, value, updated_by) VALUES (?, ?, ?)
-             ON DUPLICATE KEY UPDATE value = VALUES(value), updated_by = VALUES(updated_by)'
-        )->execute([$name, (string) $value, $actorId]);
-    } catch (PDOException $e) {
-        if ($e->getCode() === '42S02') { // table does not exist
-            return 'The settings table is missing. Run sql/004_settings.sql first.';
-        }
-        throw $e;
-    }
-    settingsStored(true);
-    auditLog($actorId, 'setting_changed', "$name = $value");
-    return null;
-}
+<?php require __DIR__ . '/../includes/admin_footer.php'; ?>
