@@ -21,7 +21,7 @@
 
 /* Deadline tags used in the deadline list */
 .deadline-days.is-done {
-    color: var(--success);
+    color: var(--success-text);
 }
 
 /* Form messages (flash) */
@@ -195,7 +195,7 @@
 /* Messages on the account pages (register, forgot and reset password) */
 .login-success {
     margin-bottom: 14px;
-    color: var(--success);
+    color: var(--success-text);
     font-size: 14px;
     font-weight: 700;
     line-height: 1.6;

@@ -411,7 +411,7 @@
 }
 
 .deadline-days.is-urgent {
-    color: var(--danger);
+    color: var(--danger-text);
 }
 
 .deadline-meta {

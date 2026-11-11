@@ -1,6 +1,8 @@
 /* Theme: BALUQ palette */
 
 :root {
+    /* Native controls (date picker, scrollbars) follow the dark page */
+    color-scheme: dark;
     /* Core palette */
     --midnight:     #2D4E71;   /* sidebar, primary buttons, banners */
     --pastel:       #AABED6;   /* hover, active accents, tints */
@@ -13,6 +15,10 @@
     --danger:       #E4472F;   /* urgent, missing */
     --success:      #40916C;   /* completed, active */
     --warning:      #F2D36B;   /* pending, new */
+    
+    /* Lighter status shades for text on dark surfaces (the fills above stay as they are) */
+    --success-text: #52B788;
+    --danger-text:  #FF8A75;
 
     /* Shape and depth */
     --radius:       10px;
