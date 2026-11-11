@@ -1,0 +1,424 @@
+/* =====================================================
+   LAYOUT — BALUQ app shell
+   Top bar across the page, content on the left, sidebar on
+   the right. The three-line button hides the sidebar on
+   desktop and opens a drawer on phones and tablets.
+===================================================== */
+
+/* ---------- App shell (desktop grid) ---------- */
+
+.app-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--sidebar-width);
+    grid-template-rows: auto 1fr auto;
+    min-height: 100vh;
+    background: var(--black);
+}
+
+.main-content {
+    display: contents;
+}
+
+.top-header {
+    grid-column: 1 / -1;
+    grid-row: 1;
+}
+
+.dashboard-content {
+    grid-column: 1;
+    grid-row: 2;
+    min-width: 0;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 28px;
+}
+
+.main-footer {
+    grid-column: 1;
+    grid-row: 3;
+    padding: 16px 28px;
+    border-top: 1px solid var(--graphite);
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+/* ---------- Sidebar (right) ---------- */
+
+.sidebar {
+    grid-column: 2;
+    grid-row: 2;
+    position: sticky;
+    top: var(--header-height);
+    height: calc(100vh - var(--header-height));
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 16px;
+    background: var(--midnight);
+    color: var(--white);
+    border-left: 1px solid var(--charcoal);
+    z-index: 1000;
+    transition: width var(--duration) var(--ease), padding var(--duration) var(--ease);
+}
+
+/* Collapsed (desktop): the sidebar column closes and content widens */
+body.sidebar-collapsed .app-container {
+    grid-template-columns: minmax(0, 1fr) 0;
+}
+
+body.sidebar-collapsed .sidebar {
+    width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    overflow: hidden;
+    border-left: none;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 4px 8px 20px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    white-space: nowrap;
+}
+
+.brand-logo {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+.brand-info h2 {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: var(--white);
+}
+
+.brand-info p {
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--pastel);
+}
+
+.sidebar-navigation {
+    flex: 1;
+}
+
+.nav-heading,
+.account-heading {
+    padding: 14px 12px 8px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    color: var(--pastel);
+}
+
+.nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.nav-link,
+.logout-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: var(--radius-sm);
+    color: var(--white);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background-color var(--duration) var(--ease), color var(--duration) var(--ease);
+}
+
+.nav-link:hover,
+.logout-link:hover {
+    background: var(--pastel);
+    color: var(--black);
+}
+
+/* Current page: white with midnight text */
+.nav-link.active {
+    background: var(--white);
+    color: var(--midnight);
+    font-weight: 800;
+}
+
+.nav-icon {
+    width: 22px;
+    text-align: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.notification-count {
+    margin-left: auto;
+    min-width: 22px;
+    padding: 1px 7px;
+    border-radius: 20px;
+    background: var(--danger);
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 800;
+    text-align: center;
+}
+
+.sidebar-footer {
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.sidebar-version {
+    margin-top: 14px;
+    font-size: 11px;
+    text-align: center;
+    color: var(--pastel);
+}
+
+/* Dimmed backdrop behind the mobile drawer (hidden on desktop) */
+.sidebar-backdrop {
+    display: none;
+}
+
+/* ---------- Top bar ---------- */
+
+.top-header {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    height: var(--header-height);
+    padding: 0 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    background: var(--charcoal);
+    border-bottom: 1px solid var(--graphite);
+}
+
+.header-left {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.header-left h3 {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--white);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.header-left p {
+    font-size: 12px;
+    color: var(--pastel);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Three-line sidebar button */
+.menu-toggle {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--midnight);
+    cursor: pointer;
+    transition: background-color var(--duration) var(--ease);
+}
+
+.menu-toggle:hover {
+    background: var(--pastel);
+}
+
+.menu-toggle span {
+    display: block;
+    width: 18px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--white);
+    transition: transform 0.3s var(--ease), opacity 0.2s var(--ease);
+}
+
+.menu-toggle:hover span {
+    background: var(--black);
+}
+
+/* Notification bell */
+.header-notification {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--midnight);
+    color: var(--white);
+    text-decoration: none;
+    font-size: 17px;
+    transition: background-color var(--duration) var(--ease);
+}
+
+.header-notification:hover {
+    background: var(--pastel);
+}
+
+.notification-dot {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--danger);
+    border: 2px solid var(--charcoal);
+}
+
+/* Signed-in person */
+.student-account {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.student-avatar {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--pastel);
+    color: var(--black);
+    font-weight: 800;
+}
+
+.student-details strong {
+    display: block;
+    font-size: 13px;
+    color: var(--white);
+}
+
+.student-details span {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+/* Tablets and phones: sidebar becomes a drawer from the right */
+@media (max-width: 960px) {
+    .app-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .main-content {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .dashboard-content {
+        flex: 1;
+        padding: 22px 18px;
+    }
+
+    .main-footer {
+        padding: 16px 18px;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: auto;
+        height: 100vh;
+        height: 100dvh;
+        width: min(82vw, 280px);
+        border-left: none;
+        transform: translateX(102%);
+        transition: transform 0.3s var(--ease);
+    }
+
+    .sidebar.is-open {
+        transform: translateX(0);
+        box-shadow: var(--shadow-md);
+    }
+
+    .sidebar-backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+        background: rgba(0, 0, 0, 0.6);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.3s var(--ease), visibility 0.3s var(--ease);
+    }
+
+    .sidebar-backdrop.is-visible {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    body.nav-open {
+        overflow: hidden;
+    }
+
+    .top-header {
+        padding: 0 18px;
+    }
+}
+
+@media (max-width: 600px) {
+    .top-header {
+        height: 64px;
+        padding: 0 14px;
+    }
+
+    .header-actions {
+        gap: 10px;
+    }
+
+    .student-details {
+        display: none;
+    }
+
+    .dashboard-content {
+        padding: 16px 14px;
+    }
+}

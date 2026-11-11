@@ -1,0 +1,143 @@
+/* =====================================================
+   DARK — BALUQ surface fixes
+   Loaded last on every app page. Anything that was a
+   "dark chip on a light page" in the old theme needs a
+   different color on dark surfaces, so it is set here.
+===================================================== */
+
+/* Form fields sit one step darker than their card */
+.input,
+.select,
+.textarea,
+.grade-input {
+    background: var(--black);
+    border-color: #3d3d3d;
+    color: var(--text);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+    color: #7d7a74;
+}
+
+.input:disabled,
+.select:disabled,
+.textarea:disabled,
+.grade-input:disabled {
+    background: var(--grey-bg);
+    color: var(--muted);
+}
+
+/* Buttons */
+.btn-dark {
+    background: #3a3a3a;
+    color: var(--white);
+}
+
+.btn-dark:hover:not(:disabled) {
+    background: #4a4a4a;
+}
+
+/* Chips and tiles that used to be near-black */
+.person-avatar {
+    background: var(--pastel);
+    color: var(--black);
+}
+
+.tab.active {
+    background: var(--midnight);
+    color: var(--white);
+    border-color: var(--midnight);
+}
+
+.info-icon,
+.deadline-date,
+.profile-photo {
+    background: var(--midnight);
+    color: var(--white);
+}
+
+.deadline-row .deadline-date.done { background: #4a4a4a; }
+
+.toast {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--graphite);
+    box-shadow: var(--shadow-md);
+}
+
+.meter-mark { background: var(--white); }
+
+/* Banners: midnight with pastel text, like the BALUQ dashboard */
+.welcome-section {
+    padding: 26px 30px;
+    background: var(--midnight);
+    border-radius: var(--radius);
+}
+
+.welcome-section h1 { color: var(--white); }
+.welcome-section p  { color: var(--pastel); }
+.welcome-section .section-label { color: var(--white); }
+
+.welcome-tagline {
+    font-style: italic;
+    letter-spacing: 0.4px;
+}
+
+.academic-year {
+    background: transparent;
+    border: 1px solid var(--pastel);
+    border-left: 4px solid var(--pastel);
+    box-shadow: none;
+}
+
+.academic-year span   { color: var(--pastel); }
+.academic-year strong { color: var(--white); }
+
+.reminder-panel,
+.hero-panel {
+    background: var(--midnight);
+    border-left-color: var(--pastel);
+}
+
+.reminder-panel p,
+.hero-panel p { color: #d6e0ec; }
+.hero-panel .section-label { color: var(--pastel); }
+.hero-meta div span { color: var(--pastel); }
+
+.reminder-link {
+    background: var(--white);
+    color: var(--midnight);
+}
+
+.reminder-link:hover {
+    background: var(--pastel);
+    color: var(--black);
+}
+
+/* Cards get a faint outline so they read on the black page */
+.summary-card,
+.content-panel,
+.doc-card,
+.deadline-row,
+.alert-card,
+.table-wrap {
+    border-color: var(--graphite);
+}
+
+.nav-link.active { box-shadow: none; }
+
+/* Thin scrollbars that match the theme */
+* {
+    scrollbar-color: #3d3d3d transparent;
+}
+
+/* Native date pickers and checkboxes follow the dark scheme */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.8);
+}
+
+/* Print: back to paper colors */
+@media print {
+    body { background: #fff; color: #000; }
+}

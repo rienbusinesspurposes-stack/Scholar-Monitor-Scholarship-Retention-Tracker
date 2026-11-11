@@ -1,0 +1,57 @@
+/* =====================================================
+   THEME — BALUQ palette (dark)
+   Midnight blue, pastel blue, grey marble on black.
+   Change colors here and the whole portal follows.
+===================================================== */
+
+:root {
+    color-scheme: dark;
+
+    /* Core palette */
+    --midnight:       #2D4E71;   /* sidebar, buttons, banners */
+    --pastel:         #AABED6;   /* hover, active accents, links */
+    --deepblue:       #142B4A;   /* login card, gradient end */
+    --muted:          #B9B6AD;   /* grey marble: muted text */
+    --black:          #111111;   /* page background */
+    --charcoal:       #1E1E1E;   /* cards, header */
+    --white:          #FFFFFF;
+
+    /* Roles (what the rest of the CSS uses) */
+    --accent:         #2D4E71;               /* primary buttons */
+    --accent-hover:   #3B628C;
+    --accent-text:    #AABED6;               /* links, labels on dark */
+    --accent-bg:      rgba(170, 190, 214, 0.14);
+    --accent-line:    #AABED6;               /* highlighted borders */
+
+    --surface:        #1E1E1E;               /* cards and panels */
+    --graphite:       #2E2E2E;               /* hover on surfaces */
+    --grey-bg:        #262626;               /* inner fills, table headers */
+    --grey-light:     #2E2E2E;               /* borders */
+    --dark-grey:      #D5D2CB;               /* secondary text */
+    --grey:           #B9B6AD;               /* muted text */
+    --text:           #FFFFFF;
+
+    /* Status (meaning only) */
+    --danger:         #E4472F;
+    --danger-hover:   #C93A24;
+    --danger-text:    #FF8A75;
+    --danger-bg:      rgba(228, 71, 47, 0.16);
+    --success:        #52B788;
+    --success-bg:     rgba(64, 145, 108, 0.20);
+    --warning:        #F2D36B;
+    --warning-bg:     rgba(242, 211, 107, 0.14);
+
+    /* Shape & depth */
+    --radius:         10px;
+    --radius-sm:      6px;
+    --shadow-sm:      0 1px 2px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.25);
+    --shadow-md:      0 12px 32px rgba(0, 0, 0, 0.5);
+
+    /* Layout */
+    --sidebar-width:  260px;
+    --header-height:  72px;
+
+    /* Motion */
+    --ease:           cubic-bezier(0.4, 0, 0.2, 1);
+    --duration:       0.2s;
+}

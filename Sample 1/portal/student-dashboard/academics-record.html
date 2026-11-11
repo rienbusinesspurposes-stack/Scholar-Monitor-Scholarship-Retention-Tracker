@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Records | BALUQ</title>
+
+    <!-- Session guard: must load first so it can redirect before the page shows -->
+    <script src="assets/js/auth.js"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Styles (load order: theme > base > layout > components > ui > pages) -->
+    <link rel="stylesheet" href="../shared/css/theme.css">
+    <link rel="stylesheet" href="../shared/css/base.css">
+    <link rel="stylesheet" href="../shared/css/layout.css">
+    <link rel="stylesheet" href="../shared/css/components.css">
+    <link rel="stylesheet" href="assets/css/ui.css">
+    <link rel="stylesheet" href="assets/css/pages.css">
+    <link rel="stylesheet" href="../shared/css/dark.css">
+    <link rel="icon" type="image/png" href="../shared/img/favicon.png">
+</head>
+
+<body data-autorefresh>
+
+    <div class="app-container">
+
+        <!-- ================= SIDEBAR ================= -->
+        <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+
+            <div class="sidebar-brand">
+                <img src="../shared/img/baluq-logo-q.png" alt="BALUQ logo" class="brand-logo">
+
+                <div class="brand-info">
+                    <h2>BALUQ</h2>
+                    <p>Scholarship Monitoring</p>
+                </div>
+            </div>
+
+            <nav class="sidebar-navigation" aria-label="Student pages">
+
+                <p class="nav-heading">MAIN MENU</p>
+
+                <ul class="nav-list">
+                    <li>
+                        <a href="index.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🏠︎</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="scholarship.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🎖</span>
+                            <span>My Scholarship</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="academics-record.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🗒</span>
+                            <span>Academic Records</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="documents.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">✉</span>
+                            <span>My Documents</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="notifications.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🛎</span>
+                            <span>Notifications</span>
+                            <span class="notification-count" aria-label="0 unread" hidden>0</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="deadlines.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🗓</span>
+                            <span>Deadlines</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <p class="nav-heading account-heading">ACCOUNT</p>
+
+                <ul class="nav-list">
+                    <li>
+                        <a href="profile.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">👤</span>
+                            <span>My Profile</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="#" class="logout-link" id="logout-button">
+                    <span aria-hidden="true">➜]</span>
+                    <span>Log Out</span>
+                </a>
+
+                <div class="sidebar-version">
+                    <p>© <span data-year></span> MCC BALUQ</p>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- Dims the page when the mobile drawer is open -->
+        <div class="sidebar-backdrop" aria-hidden="true"></div>
+
+
+        <!-- ================= MAIN CONTENT ================= -->
+        <main class="main-content">
+
+            <header class="top-header">
+
+                <div class="header-left">
+                    <h3>Mabalacat City College</h3>
+                    <p>BALUQ · Academic Records</p>
+                </div>
+
+                <div class="header-actions">
+
+                    <a href="notifications.html"
+                       class="header-notification"
+                       aria-label="View notifications">
+                        🔔
+                        <span class="notification-dot" hidden></span>
+                    </a>
+
+                    <a href="profile.html" class="student-account" style="text-decoration:none">
+                        <div class="student-avatar" data-student-avatar aria-hidden="true">?</div>
+
+                        <div class="student-details">
+                            <strong data-student-name>Student Name</strong>
+                            <span data-student-no>Student Number</span>
+                        </div>
+                    </a>
+
+                    <button type="button" class="menu-toggle" aria-controls="sidebar"
+                            aria-expanded="true" aria-label="Hide navigation menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+
+            </header>
+
+
+            <section class="dashboard-content">
+                <section class="page-heading">
+                    <p class="section-label">BALUQ: STUDENT PORTAL</p>
+                    <h1>Grades</h1>
+                    <p>Your grades for the current semester.</p>
+                </section>
+
+                <section class="content-panel table-panel">
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th><th>Units</th><th>Midterm</th>
+                                    <th>Final</th><th>Grade</th><th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody id="records-body"></tbody>
+                        </table>
+                    </div>
+                    <div class="table-summary" id="rec-summary"></div>
+                    <div class="table-footer" id="rec-updated"></div>
+                </section>
+            </section>
+
+
+            <footer class="main-footer">
+                <p>© <span data-year></span> MCC BALUQ</p>
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <!-- Logout confirmation modal -->
+    <div class="modal-overlay" id="logout-modal" role="dialog" aria-modal="true"
+         aria-labelledby="logout-title" aria-hidden="true">
+        <div class="modal-box">
+
+            <button type="button" class="modal-close" id="close-logout-modal"
+                    aria-label="Close">&times;</button>
+
+            <div class="logout-modal-icon" aria-hidden="true">➜]</div>
+
+            <h2 id="logout-title">Logging Out?</h2>
+
+            <p>Are you sure you want to log out of your MCC BALUQ account?</p>
+
+            <div class="logout-modal-actions">
+                <button type="button" class="cancel-button" id="cancel-logout">Cancel</button>
+                <button type="button" class="confirm-logout-button" id="confirm-logout">Yes, Log Out</button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Scripts (shared data first, then the page script) -->
+    <script src="../shared/js/data.js"></script>
+    <script src="assets/js/student.js"></script>
+    <script src="../shared/js/ui.js"></script>
+    <script src="../shared/js/files.js"></script>
+    <script src="../shared/js/autorefresh.js"></script>
+    <script src="assets/js/nav.js"></script>
+    <script src="assets/js/shell.js"></script>
+    <script src="assets/js/features/academics.js"></script>
+
+</body>
+
+</html>

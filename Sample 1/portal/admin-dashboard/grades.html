@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grades | BALUQ Admin</title>
+
+    <!-- Session guard: must load first so it can redirect before the page shows -->
+    <script src="assets/js/auth.js"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Styles (load order: theme > base > layout > components > admin) -->
+    <link rel="stylesheet" href="../shared/css/theme.css">
+    <link rel="stylesheet" href="../shared/css/base.css">
+    <link rel="stylesheet" href="../shared/css/layout.css">
+    <link rel="stylesheet" href="../shared/css/components.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
+    <link rel="stylesheet" href="../shared/css/dark.css">
+    <link rel="icon" type="image/png" href="../shared/img/favicon.png">
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <!-- ================= SIDEBAR ================= -->
+        <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+
+            <div class="sidebar-brand">
+                <img src="../shared/img/baluq-logo-q.png" alt="BALUQ logo" class="brand-logo">
+
+                <div class="brand-info">
+                    <h2>BALUQ</h2>
+                    <p>Admin Portal</p>
+                </div>
+            </div>
+
+            <nav class="sidebar-navigation" aria-label="Admin pages">
+
+                <p class="nav-heading">MAIN MENU</p>
+
+                <ul class="nav-list">
+                    <li>
+                        <a href="index.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🏠︎</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="grades.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🗒</span>
+                            <span>Grades</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="scholars.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🎖</span>
+                            <span>Scholars</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="requirements.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">📋</span>
+                            <span>Requirements</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="alerts.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🔔</span>
+                            <span>Alerts</span>
+                            <span class="notification-count" data-alert-count hidden>0</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Super admin only: removed by nav.js for other roles -->
+                <p class="nav-heading" data-roles="superadmin">ADMINISTRATION</p>
+
+                <ul class="nav-list" data-roles="superadmin">
+                    <li>
+                        <a href="accounts.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">👤</span>
+                            <span>Accounts</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="audit-logs.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🛡</span>
+                            <span>Audit Logs</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="settings.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">⚙</span>
+                            <span>System Settings</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="#" class="logout-link" id="logout-button">
+                    <span aria-hidden="true">➜]</span>
+                    <span>Log Out</span>
+                </a>
+
+                <div class="sidebar-version">
+                    <p>© <span data-year></span> MCC BALUQ</p>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- Dims the page when the mobile drawer is open -->
+        <div class="sidebar-backdrop" aria-hidden="true"></div>
+
+
+        <!-- ================= MAIN CONTENT ================= -->
+        <main class="main-content">
+
+            <header class="top-header">
+
+                <div class="header-left">
+                    <h3>Mabalacat City College</h3>
+                    <p>BALUQ · Grade Management</p>
+                </div>
+
+                <div class="header-actions">
+                    <div class="student-account">
+                        <div class="student-avatar" aria-hidden="true" data-user-initial>?</div>
+
+                        <div class="student-details">
+                            <strong data-user-name>Name</strong>
+                            <span class="role-chip" data-user-role>Role</span>
+                        </div>
+                    </div>
+
+                    <button type="button" class="menu-toggle" aria-controls="sidebar"
+                            aria-expanded="true" aria-label="Hide navigation menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+
+            </header>
+
+
+            <section class="dashboard-content">
+
+                <section class="welcome-section">
+                    <div>
+                        <p class="section-label">GRADE MANAGEMENT</p>
+                        <h1>Student Grades</h1>
+                        <p>Enter midterm and final scores. The final grade is the average of both.</p>
+                    </div>
+                    <div class="academic-year">
+                        <span>ACADEMIC YEAR</span>
+                        <strong data-setting="academicYear">2026–2027</strong>
+                    </div>
+                </section>
+
+                <div class="banner" id="lock-banner" hidden role="status">
+                    <span aria-hidden="true">🔒</span>
+                    <div><strong>Grading is locked</strong><p></p></div>
+                </div>
+
+                <section class="summary-section">
+                    <div class="summary-grid">
+                        <article class="summary-card">
+                            <div class="card-header"><span class="card-label">Students</span><span class="card-icon" aria-hidden="true">🎖</span></div>
+                            <h3 id="stat-students">0</h3>
+                            <p>Enrolled in this subject.</p>
+                        </article>
+                        <article class="summary-card">
+                            <div class="card-header"><span class="card-label">Graded</span><span class="card-icon" aria-hidden="true">🗒</span></div>
+                            <h3 id="stat-graded">0</h3>
+                            <p>Both scores entered.</p>
+                        </article>
+                        <article class="summary-card">
+                            <div class="card-header"><span class="card-label">Class Average</span><span class="card-icon" aria-hidden="true">📈</span></div>
+                            <h3 id="stat-average">—</h3>
+                            <p>Average of final grades.</p>
+                        </article>
+                        <article class="summary-card">
+                            <div class="card-header"><span class="card-label">Failing</span><span class="card-icon" aria-hidden="true">!</span></div>
+                            <h3 id="stat-failing">0</h3>
+                            <p>Below the passing grade.</p>
+                        </article>
+                    </div>
+                </section>
+
+                <div class="toolbar" id="grades-toolbar">
+                    <label class="field-inline">
+                        <span>Subject</span>
+                        <select class="select" id="subject-select"></select>
+                    </label>
+                    <label class="field-inline">
+                        <span>Search</span>
+                        <input type="search" class="input search" id="grade-search" placeholder="Name or student number">
+                    </label>
+                    <label class="field-inline">
+                        <span>Remarks</span>
+                        <select class="select" id="status-filter" style="min-width:150px">
+                            <option value="all">All</option>
+                            <option value="incomplete">Incomplete</option>
+                            <option value="passed">Passed</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                    </label>
+                    <span class="toolbar-spacer"></span>
+                    <button type="button" class="btn btn-secondary" id="export-grades">Export CSV</button>
+                </div>
+
+                <section class="content-panel table-panel" id="grades-table-wrap">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Class List</h2>
+                            <p id="subject-meta"></p>
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Midterm</th>
+                                    <th>Final</th>
+                                    <th>Grade</th>
+                                    <th>Remarks</th>
+                                    <th>Last updated</th>
+                                </tr>
+                            </thead>
+                            <tbody id="grades-body"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <div class="empty-state" id="grades-empty" hidden>
+                    <h2>No subjects assigned</h2>
+                    <p>A super admin needs to assign subjects to your account before you can enter grades.</p>
+                </div>
+
+                <div class="save-bar" id="save-bar" role="region" aria-label="Unsaved grade changes">
+                    <span id="save-count">0 unsaved changes</span>
+                    <button type="button" class="btn btn-sm btn-secondary" id="discard-grades">Discard</button>
+                    <button type="button" class="btn btn-sm btn-primary" id="save-grades">Save grades</button>
+                </div>
+
+            </section>
+
+
+            <footer class="main-footer">
+                <p>© <span data-year></span> MCC BALUQ</p>
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <!-- Logout confirmation modal -->
+    <div class="modal-overlay" id="logout-modal" role="dialog" aria-modal="true"
+         aria-labelledby="logout-title" aria-hidden="true">
+        <div class="modal-box">
+
+            <button type="button" class="modal-close" id="close-logout-modal"
+                    aria-label="Close">&times;</button>
+
+            <div class="logout-modal-icon" aria-hidden="true">➜]</div>
+
+            <h2 id="logout-title">Logging Out?</h2>
+
+            <p>Are you sure you want to log out of your MCC BALUQ account?</p>
+
+            <div class="logout-modal-actions">
+                <button type="button" class="cancel-button" id="cancel-logout">Cancel</button>
+                <button type="button" class="confirm-logout-button" id="confirm-logout">Yes, Log Out</button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Scripts -->
+    <script src="../shared/js/data.js"></script>
+    <script src="../shared/js/ui.js"></script>
+    <script src="../shared/js/files.js"></script>
+    <script src="../shared/js/autorefresh.js"></script>
+    <script src="assets/js/nav.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+    <script src="assets/js/features/grades.js"></script>
+</body>
+
+</html>

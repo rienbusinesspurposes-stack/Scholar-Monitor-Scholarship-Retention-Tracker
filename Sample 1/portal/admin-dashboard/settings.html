@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Settings | BALUQ Admin</title>
+
+    <!-- Session guard: must load first so it can redirect before the page shows -->
+    <script src="assets/js/auth.js" data-roles="superadmin"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Styles (load order: theme > base > layout > components > admin) -->
+    <link rel="stylesheet" href="../shared/css/theme.css">
+    <link rel="stylesheet" href="../shared/css/base.css">
+    <link rel="stylesheet" href="../shared/css/layout.css">
+    <link rel="stylesheet" href="../shared/css/components.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
+    <link rel="stylesheet" href="../shared/css/dark.css">
+    <link rel="icon" type="image/png" href="../shared/img/favicon.png">
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <!-- ================= SIDEBAR ================= -->
+        <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+
+            <div class="sidebar-brand">
+                <img src="../shared/img/baluq-logo-q.png" alt="BALUQ logo" class="brand-logo">
+
+                <div class="brand-info">
+                    <h2>BALUQ</h2>
+                    <p>Admin Portal</p>
+                </div>
+            </div>
+
+            <nav class="sidebar-navigation" aria-label="Admin pages">
+
+                <p class="nav-heading">MAIN MENU</p>
+
+                <ul class="nav-list">
+                    <li>
+                        <a href="index.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🏠︎</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="grades.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🗒</span>
+                            <span>Grades</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="scholars.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🎖</span>
+                            <span>Scholars</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="requirements.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">📋</span>
+                            <span>Requirements</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="alerts.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🔔</span>
+                            <span>Alerts</span>
+                            <span class="notification-count" data-alert-count hidden>0</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Super admin only: removed by nav.js for other roles -->
+                <p class="nav-heading" data-roles="superadmin">ADMINISTRATION</p>
+
+                <ul class="nav-list" data-roles="superadmin">
+                    <li>
+                        <a href="accounts.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">👤</span>
+                            <span>Accounts</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="audit-logs.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🛡</span>
+                            <span>Audit Logs</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="settings.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">⚙</span>
+                            <span>System Settings</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="#" class="logout-link" id="logout-button">
+                    <span aria-hidden="true">➜]</span>
+                    <span>Log Out</span>
+                </a>
+
+                <div class="sidebar-version">
+                    <p>© <span data-year></span> MCC BALUQ</p>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- Dims the page when the mobile drawer is open -->
+        <div class="sidebar-backdrop" aria-hidden="true"></div>
+
+
+        <!-- ================= MAIN CONTENT ================= -->
+        <main class="main-content">
+
+            <header class="top-header">
+
+                <div class="header-left">
+                    <h3>Mabalacat City College</h3>
+                    <p>BALUQ · System Settings</p>
+                </div>
+
+                <div class="header-actions">
+                    <div class="student-account">
+                        <div class="student-avatar" aria-hidden="true" data-user-initial>?</div>
+
+                        <div class="student-details">
+                            <strong data-user-name>Name</strong>
+                            <span class="role-chip" data-user-role>Role</span>
+                        </div>
+                    </div>
+
+                    <button type="button" class="menu-toggle" aria-controls="sidebar"
+                            aria-expanded="true" aria-label="Hide navigation menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+
+            </header>
+
+
+            <section class="dashboard-content">
+
+                <section class="welcome-section">
+                    <div>
+                        <p class="section-label">ADMINISTRATION</p>
+                        <h1>System Settings</h1>
+                        <p>School details, grading rules, security, and mail. Only super admins can change these.</p>
+                    </div>
+                    
+                </section>
+
+                <form id="settings-form" novalidate>
+                    <div class="settings-stack">
+
+                        <section class="content-panel">
+                            <div class="panel-header"><div><h2>General</h2><p>Shown across the portal</p></div></div>
+                            <div class="form-grid">
+                                <div class="field full">
+                                <label for="st-schoolName">School name</label>
+                                <input class="input" id="st-schoolName" name="schoolName" type="text" >
+                                
+                            </div>
+                                <div class="field">
+                                <label for="st-academicYear">Academic year</label>
+                                <input class="input" id="st-academicYear" name="academicYear" type="text" >
+                                
+                            </div>
+                                <div class="field">
+                                    <label for="st-semester">Current semester</label>
+                                    <select class="select" id="st-semester" name="semester">
+                                        <option>1st Semester</option><option>2nd Semester</option><option>Summer</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="content-panel">
+                            <div class="panel-header"><div><h2>Grading</h2><p>Applied to every grade and scholar record</p></div></div>
+                            <div class="switch-row">
+                                <div><strong>Lock grade editing for teachers</strong><span>While on, teachers can view grades but not change them. Super admins can still edit.</span></div>
+                                <label class="switch"><input type="checkbox" name="gradeLock" aria-label="Lock grade editing for teachers"><i></i></label>
+                            </div>
+                            <div class="form-grid" style="margin-top:12px">
+                                <div class="field">
+                                <label for="st-passingGrade">Passing grade</label>
+                                <input class="input" id="st-passingGrade" name="passingGrade" type="number" min="50" max="100" step="1">
+                                <span class="hint">Grades below this are marked Failed.</span>
+                            </div>
+                                <div class="field">
+                                <label for="st-retentionGwa">Scholarship retention GWA</label>
+                                <input class="input" id="st-retentionGwa" name="retentionGwa" type="number" min="50" max="100" step="0.01">
+                                <span class="hint">Scholars below this GWA are flagged as critical.</span>
+                            </div>
+                                <div class="field">
+                                <label for="st-alertMargin">Early-warning margin</label>
+                                <input class="input" id="st-alertMargin" name="alertMargin" type="number" min="0" max="15" step="0.5">
+                                <span class="hint">Scholars within this many points above the retention GWA get a warning.</span>
+                            </div>
+                            </div>
+                        </section>
+
+                        <section class="content-panel">
+                            <div class="panel-header"><div><h2>Security</h2><p>Password and sign-in rules</p></div></div>
+                            <div class="form-grid">
+                                <div class="field">
+                                <label for="st-minPasswordLength">Minimum password length</label>
+                                <input class="input" id="st-minPasswordLength" name="minPasswordLength" type="number" min="6" max="64">
+                                <span class="hint">Checked when accounts are created or reset.</span>
+                            </div>
+                                <div class="field">
+                                <label for="st-maxFailedLogins">Failed logins before lock</label>
+                                <input class="input" id="st-maxFailedLogins" name="maxFailedLogins" type="number" min="3" max="20">
+                                <span class="hint">The account locks until a super admin unlocks it.</span>
+                            </div>
+                            </div>
+                        </section>
+
+                        <section class="content-panel">
+                            <div class="panel-header"><div><h2>Mail</h2><p>Saved here; sending is done by the PHP backend</p></div></div>
+                            <div class="form-grid">
+                                <div class="field">
+                                <label for="st-smtpHost">SMTP host</label>
+                                <input class="input" id="st-smtpHost" name="smtpHost" type="text" >
+                                
+                            </div>
+                                <div class="field">
+                                <label for="st-smtpPort">SMTP port</label>
+                                <input class="input" id="st-smtpPort" name="smtpPort" type="number" min="1" max="65535">
+                                
+                            </div>
+                                <div class="field full">
+                                <label for="st-fromEmail">Sender address</label>
+                                <input class="input" id="st-fromEmail" name="fromEmail" type="email" >
+                                
+                            </div>
+                            </div>
+                            <div class="switch-row">
+                                <div><strong>Email scholars when a grade changes</strong><span>Used once mail sending is connected.</span></div>
+                                <label class="switch"><input type="checkbox" name="notifyOnGradeChange" aria-label="Email scholars when a grade changes"><i></i></label>
+                            </div>
+                        </section>
+
+                        <section class="content-panel">
+                            <div class="panel-header"><div><h2>System</h2><p>Version and demo data</p></div></div>
+                            <div class="version-row">
+                                <div><strong>BALUQ Admin 1.0.0</strong><p class="muted-cell">Frontend demo build</p></div>
+                                <div class="settings-actions">
+                                    <button type="button" class="btn btn-secondary" id="check-updates">Check for updates</button>
+                                    <button type="button" class="btn btn-danger-ghost" id="reset-demo">Reset demo data</button>
+                                </div>
+                            </div>
+                        </section>
+
+                        <p class="form-error" id="settings-error" role="alert"></p>
+                        <div><button type="submit" class="btn btn-primary">Save settings</button></div>
+
+                    </div>
+                </form>
+
+            </section>
+
+
+            <footer class="main-footer">
+                <p>© <span data-year></span> MCC BALUQ</p>
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <!-- Logout confirmation modal -->
+    <div class="modal-overlay" id="logout-modal" role="dialog" aria-modal="true"
+         aria-labelledby="logout-title" aria-hidden="true">
+        <div class="modal-box">
+
+            <button type="button" class="modal-close" id="close-logout-modal"
+                    aria-label="Close">&times;</button>
+
+            <div class="logout-modal-icon" aria-hidden="true">➜]</div>
+
+            <h2 id="logout-title">Logging Out?</h2>
+
+            <p>Are you sure you want to log out of your MCC BALUQ account?</p>
+
+            <div class="logout-modal-actions">
+                <button type="button" class="cancel-button" id="cancel-logout">Cancel</button>
+                <button type="button" class="confirm-logout-button" id="confirm-logout">Yes, Log Out</button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Scripts -->
+    <script src="../shared/js/data.js"></script>
+    <script src="../shared/js/ui.js"></script>
+    <script src="../shared/js/files.js"></script>
+    <script src="../shared/js/autorefresh.js"></script>
+    <script src="assets/js/nav.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+    <script src="assets/js/features/settings.js"></script>
+</body>
+
+</html>

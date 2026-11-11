@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accounts | BALUQ Admin</title>
+
+    <!-- Session guard: must load first so it can redirect before the page shows -->
+    <script src="assets/js/auth.js" data-roles="superadmin"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Styles (load order: theme > base > layout > components > admin) -->
+    <link rel="stylesheet" href="../shared/css/theme.css">
+    <link rel="stylesheet" href="../shared/css/base.css">
+    <link rel="stylesheet" href="../shared/css/layout.css">
+    <link rel="stylesheet" href="../shared/css/components.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
+    <link rel="stylesheet" href="../shared/css/dark.css">
+    <link rel="icon" type="image/png" href="../shared/img/favicon.png">
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <!-- ================= SIDEBAR ================= -->
+        <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+
+            <div class="sidebar-brand">
+                <img src="../shared/img/baluq-logo-q.png" alt="BALUQ logo" class="brand-logo">
+
+                <div class="brand-info">
+                    <h2>BALUQ</h2>
+                    <p>Admin Portal</p>
+                </div>
+            </div>
+
+            <nav class="sidebar-navigation" aria-label="Admin pages">
+
+                <p class="nav-heading">MAIN MENU</p>
+
+                <ul class="nav-list">
+                    <li>
+                        <a href="index.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🏠︎</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="grades.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🗒</span>
+                            <span>Grades</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="scholars.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🎖</span>
+                            <span>Scholars</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="requirements.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">📋</span>
+                            <span>Requirements</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="alerts.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🔔</span>
+                            <span>Alerts</span>
+                            <span class="notification-count" data-alert-count hidden>0</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Super admin only: removed by nav.js for other roles -->
+                <p class="nav-heading" data-roles="superadmin">ADMINISTRATION</p>
+
+                <ul class="nav-list" data-roles="superadmin">
+                    <li>
+                        <a href="accounts.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">👤</span>
+                            <span>Accounts</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="audit-logs.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">🛡</span>
+                            <span>Audit Logs</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="settings.html" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">⚙</span>
+                            <span>System Settings</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="#" class="logout-link" id="logout-button">
+                    <span aria-hidden="true">➜]</span>
+                    <span>Log Out</span>
+                </a>
+
+                <div class="sidebar-version">
+                    <p>© <span data-year></span> MCC BALUQ</p>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- Dims the page when the mobile drawer is open -->
+        <div class="sidebar-backdrop" aria-hidden="true"></div>
+
+
+        <!-- ================= MAIN CONTENT ================= -->
+        <main class="main-content">
+
+            <header class="top-header">
+
+                <div class="header-left">
+                    <h3>Mabalacat City College</h3>
+                    <p>BALUQ · Account Management</p>
+                </div>
+
+                <div class="header-actions">
+                    <div class="student-account">
+                        <div class="student-avatar" aria-hidden="true" data-user-initial>?</div>
+
+                        <div class="student-details">
+                            <strong data-user-name>Name</strong>
+                            <span class="role-chip" data-user-role>Role</span>
+                        </div>
+                    </div>
+
+                    <button type="button" class="menu-toggle" aria-controls="sidebar"
+                            aria-expanded="true" aria-label="Hide navigation menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+
+            </header>
+
+
+            <section class="dashboard-content">
+
+                <section class="welcome-section">
+                    <div>
+                        <p class="section-label">ADMINISTRATION</p>
+                        <h1>Accounts</h1>
+                        <p>Create accounts, change roles, assign subjects, and disable or delete users.</p>
+                    </div>
+                    
+                </section>
+
+                <div class="toolbar">
+                    <label class="field-inline">
+                        <span>Search</span>
+                        <input type="search" class="input search" id="account-search" placeholder="Name or email">
+                    </label>
+                    <label class="field-inline">
+                        <span>Role</span>
+                        <select class="select" id="account-role" style="min-width:150px">
+                            <option value="all">All</option>
+                            <option value="superadmin">Super Admin</option>
+                            <option value="teacher">Teacher</option>
+                        </select>
+                    </label>
+                    <span class="toolbar-spacer"></span>
+                    <button type="button" class="btn btn-primary" id="add-account">+ Create Account</button>
+                </div>
+
+                <section class="content-panel table-panel">
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Account</th>
+                                    <th>Role</th>
+                                    <th>Subjects</th>
+                                    <th>Status</th>
+                                    <th>Last sign-in</th>
+                                    <th><span class="sr-only">Actions</span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="accounts-body"></tbody>
+                        </table>
+                    </div>
+                    <div class="table-footer" id="account-count"></div>
+                </section>
+
+            </section>
+
+
+            <footer class="main-footer">
+                <p>© <span data-year></span> MCC BALUQ</p>
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <!-- Logout confirmation modal -->
+    <div class="modal-overlay" id="logout-modal" role="dialog" aria-modal="true"
+         aria-labelledby="logout-title" aria-hidden="true">
+        <div class="modal-box">
+
+            <button type="button" class="modal-close" id="close-logout-modal"
+                    aria-label="Close">&times;</button>
+
+            <div class="logout-modal-icon" aria-hidden="true">➜]</div>
+
+            <h2 id="logout-title">Logging Out?</h2>
+
+            <p>Are you sure you want to log out of your MCC BALUQ account?</p>
+
+            <div class="logout-modal-actions">
+                <button type="button" class="cancel-button" id="cancel-logout">Cancel</button>
+                <button type="button" class="confirm-logout-button" id="confirm-logout">Yes, Log Out</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Create / edit account -->
+    <div class="modal-overlay" id="account-modal" role="dialog" aria-modal="true" aria-labelledby="account-modal-title" aria-hidden="true">
+        <form class="modal-box wide" id="account-form" novalidate>
+            <button type="button" class="modal-close" data-close aria-label="Close">&times;</button>
+            <h2 id="account-modal-title">Create Account</h2>
+            <input type="hidden" name="id">
+            <div class="form-grid">
+                <div class="field full">
+                    <label for="ac-name">Full name</label>
+                    <input class="input" id="ac-name" name="name" required autocomplete="off">
+                </div>
+                <div class="field">
+                    <label for="ac-email">Email</label>
+                    <input class="input" id="ac-email" name="email" type="email" placeholder="name@mcc.edu.ph" required autocomplete="off">
+                </div>
+                <div class="field">
+                    <label for="ac-role">Role</label>
+                    <select class="select" id="ac-role" name="role">
+                        <option value="teacher">Teacher</option>
+                        <option value="superadmin">Super Admin</option>
+                    </select>
+                </div>
+                <div class="field full">
+                    <label for="ac-password">Password</label>
+                    <input class="input" id="ac-password" name="password" type="password" autocomplete="new-password">
+                    <span class="hint" id="password-hint"></span>
+                </div>
+                <div class="field full" id="subject-field">
+                    <span class="label">Assigned subjects</span>
+                    <div class="check-box" id="subject-checks"></div>
+                    <span class="hint">Teachers can only edit grades for the subjects assigned here.</span>
+                </div>
+            </div>
+            <p class="form-error" id="account-error" role="alert"></p>
+            <div class="modal-actions">
+                <button type="button" class="cancel-button" data-close>Cancel</button>
+                <button type="submit" class="btn btn-primary">Save account</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../shared/js/data.js"></script>
+    <script src="../shared/js/ui.js"></script>
+    <script src="../shared/js/files.js"></script>
+    <script src="../shared/js/autorefresh.js"></script>
+    <script src="assets/js/nav.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+    <script src="assets/js/features/accounts.js"></script>
+</body>
+
+</html>

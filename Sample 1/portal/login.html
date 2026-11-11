@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" data-public>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | BALUQ</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="shared/css/login.css">
+    <link rel="icon" type="image/png" href="shared/img/favicon.png">
+</head>
+
+<body>
+
+    <main class="login-container">
+
+        <!-- Left Branding Section -->
+        <section class="login-brand">
+            <img src="shared/img/baluq-logo-white.png" alt="BaluQ Logo" class="login-logo">
+
+            <h1>MCC BaluQ</h1>
+
+            <p class="brand-tagline">Ing abante mu, Ing bukas mu.</p>
+
+            <div class="brand-message">
+                <h2>One Sign-In for Everyone</h2>
+                <p>
+                    Scholars track their grades, documents and alerts.
+                    Teachers and administrators manage scholar records.
+                    Sign in and you will be taken to the right portal.
+                </p>
+            </div>
+
+            <p class="brand-footer">MCC Scholarship Monitoring System</p>
+        </section>
+
+
+        <!-- Right Login Section -->
+        <section class="login-section">
+
+            <div class="login-card">
+
+                <div class="mobile-brand">
+                    <img src="shared/img/baluq-logo-q.png" alt="BaluQ Logo" class="mobile-logo">
+                    <h2>"Balu Qu, iSKOLAR Qu"</h2>
+                </div>
+
+                <div class="login-heading">
+                    <span class="welcome-label">WELCOME BACK!</span>
+                    <h2>Sign in to your account</h2>
+                    <p>Enter your school email and password to continue.</p>
+                </div>
+
+                <form id="login-form" novalidate>
+
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="text" id="login-email" name="email"
+                               placeholder="EX. j.delacruz@mcc.edu.ph"
+                               autocomplete="username" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password" name="password"
+                                   placeholder="Enter your password"
+                                   autocomplete="current-password" required>
+                            <button type="button" id="toggle-password" class="password-toggle">Show</button>
+                        </div>
+                    </div>
+
+                    <div class="login-options">
+                        <label class="remember-me">
+                            <input type="checkbox" id="remember-me">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" id="forgot-password">Forgot password?</a>
+                    </div>
+
+                    <p id="login-error" class="login-error" role="alert"></p>
+
+                    <button type="submit" class="login-button">Sign In</button>
+
+                </form>
+
+                <div class="demo-accounts">
+                    <strong>Demo accounts (frontend demo only)</strong>
+                    <p class="group">Staff</p>
+                    <div id="demo-staff"></div>
+                    <p class="group">Scholars (password: student123)</p>
+                    <div id="demo-students"></div>
+                </div>
+
+                <div class="login-divider"><span>MCC BALUQ</span></div>
+
+                <p class="login-help">
+                    Having trouble accessing your account?
+                    <a href="mailto:your-school-email@example.com">Contact the administrator</a>
+                </p>
+
+            </div>
+
+            <footer class="login-footer">
+                © <span id="login-year"></span> MCC BALUQ. All Rights Reserved.
+            </footer>
+
+        </section>
+
+    </main>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal-overlay" id="forgot-modal">
+        <div class="modal-box">
+            <button type="button" class="modal-close" id="close-modal">&times;</button>
+            <div class="modal-icon">?</div>
+            <h2>Forgot Password?</h2>
+            <p>
+                Having trouble accessing your account?
+                Please contact your scholarship administrator
+                to reset your password.
+            </p>
+            <button type="button" class="modal-button" id="modal-ok">Got it!</button>
+        </div>
+    </div>
+
+    <script src="shared/js/data.js"></script>
+    <script src="student-dashboard/assets/js/student.js"></script>
+    <script src="shared/js/login.js"></script>
+
+</body>
+</html>
