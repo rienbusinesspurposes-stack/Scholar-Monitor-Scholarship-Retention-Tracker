@@ -1,11 +1,61 @@
 <?php
-// One scholar in full: standing, grade history and documents, plus ending or reinstating the scholarship.
+// One scholar in full: standing, grade history and documents, plus editing details and ending or reinstating the scholarship.
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/security.php';
 require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/scholar_status.php';
 
 $user = requireRole(['Admin', 'SuperAdmin']);
+
+// Changes a scholar's student number and/or program. Returns an error message, or null on success.
+// Documents already uploaded stay linked to the old program's requirements; the new program's list starts empty.
+function updateScholar(int $scholarId, int $programId, string $number, int $actorId): ?string
+{
+    global $pdo;
+
+    $number = trim($number);
+    if (!preg_match('/^[A-Za-z0-9-]{3,30}\z/', $number)) {
+        return 'The student number must be 3 to 30 letters, digits or dashes.';
+    }
+
+    $stmt = $pdo->prepare('SELECT program_id, student_number FROM scholars WHERE id = ?');
+    $stmt->execute([$scholarId]);
+    $before = $stmt->fetch();
+    if (!$before) {
+        return 'That scholar was not found.';
+    }
+    $moved = (int) $before['program_id'] !== $programId;
+    if (!$moved && $before['student_number'] === $number) {
+        return 'Nothing was changed.';
+    }
+
+    if ($moved) {
+        $stmt = $pdo->prepare('SELECT name FROM scholarship_programs WHERE id = ? AND is_active = 1');
+        $stmt->execute([$programId]);
+        $newProgram = $stmt->fetchColumn();
+        if ($newProgram === false) {
+            return 'That program was not found or is no longer active.';
+        }
+    }
+
+    try {
+        $pdo->prepare('UPDATE scholars SET program_id = ?, student_number = ? WHERE id = ?')
+            ->execute([$programId, $number, $scholarId]);
+    } catch (PDOException $e) {
+        if ($e->getCode() === '23000') {
+            return 'That student number is already in use.';
+        }
+        throw $e;
+    }
+    auditLog($actorId, 'scholar_updated', "scholar $scholarId: number {$before['student_number']} to $number, program {$before['program_id']} to $programId");
+
+    if ($moved) {
+        // The new program has its own grade rule, so the status is checked again.
+        refreshScholarStatus($scholarId, $actorId);
+        notifyScholar($scholarId, 'program_changed', "Your scholarship program is now $newProgram. Check My Documents for its requirements.");
+    }
+    return null;
+}
 
 enforceCsrfOnPost();
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
@@ -16,13 +66,16 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     } elseif (($_POST['action'] ?? '') === 'reinstate') {
         $error = reinstateScholarship($scholarId, $user['id']);
         $_SESSION['flash'] = $error ? ['error', $error] : ['success', 'Scholarship reinstated. The student was notified.'];
+    } elseif (($_POST['action'] ?? '') === 'update') {
+        $error = updateScholar($scholarId, (int) ($_POST['program_id'] ?? 0), (string) ($_POST['student_number'] ?? ''), $user['id']);
+        $_SESSION['flash'] = $error ? ['error', $error] : ['success', 'Details saved.'];
     }
     redirect('admin/scholar.php?id=' . $scholarId);
 }
 
 $scholarId = (int) ($_GET['id'] ?? 0);
 $stmt = $pdo->prepare(
-    'SELECT sc.id, sc.student_number, sc.status, sc.verified_at, sc.ended_at, sc.ended_reason,
+    'SELECT sc.id, sc.program_id, sc.student_number, sc.status, sc.verified_at, sc.ended_at, sc.ended_reason,
             u.full_name, u.email, p.name AS program_name, p.min_grade, p.warning_margin, v.full_name AS verifier
      FROM scholars sc
      JOIN users u ON u.id = sc.user_id
@@ -36,6 +89,11 @@ if (!$scholar) {
     $_SESSION['flash'] = ['error', 'That scholar was not found.'];
     redirect('admin/scholars.php');
 }
+
+// Active programs, plus the scholar's own program even if it was switched off since.
+$stmt = $pdo->prepare('SELECT id, name FROM scholarship_programs WHERE is_active = 1 OR id = ? ORDER BY name');
+$stmt->execute([$scholar['program_id']]);
+$programs = $stmt->fetchAll();
 
 $stmt = $pdo->prepare('SELECT term, average, created_at FROM grade_records WHERE scholar_id = ? ORDER BY id DESC');
 $stmt->execute([$scholarId]);
@@ -101,6 +159,28 @@ require __DIR__ . '/../includes/admin_header.php';
     </section>
 
 </div>
+
+<section class="content-panel panel-gap">
+    <div class="panel-header"><div><h2>Edit details</h2><p>Fix a wrong student number or move the scholar to another program. A move applies the new program's grade rule and document list, and the student is told</p></div></div>
+    <form method="post" class="stack-form">
+        <?= csrf_field() ?>
+        <input type="hidden" name="action" value="update">
+        <input type="hidden" name="scholar_id" value="<?= (int) $scholar['id'] ?>">
+
+        <label for="student_number">Student number</label>
+        <input type="text" name="student_number" id="student_number" required maxlength="30"
+               pattern="[A-Za-z0-9\-]{3,30}" title="3 to 30 letters, digits or dashes" value="<?= e($scholar['student_number']) ?>">
+
+        <label for="program_id">Program</label>
+        <select name="program_id" id="program_id" required>
+            <?php foreach ($programs as $p): ?>
+                <option value="<?= (int) $p['id'] ?>"<?= (int) $p['id'] === (int) $scholar['program_id'] ? ' selected' : '' ?>><?= e($p['name']) ?></option>
+            <?php endforeach; ?>
+        </select>
+
+        <button type="submit" class="btn">Save details</button>
+    </form>
+</section>
 
 <section class="content-panel panel-gap">
     <div class="panel-header"><div><h2>Grade history</h2><p>Newest first</p></div></div>
