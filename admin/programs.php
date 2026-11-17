@@ -78,6 +78,32 @@ function setProgramActive(int $adminId, int $id, bool $active): ?string
     return null;
 }
 
+// Deletes a program that has no scholars; its requirements go with it. A program with scholars can only be switched off.
+// One check-and-delete statement, and the database also refuses if a scholar was added at the same moment.
+function deleteProgram(int $adminId, int $id): ?string
+{
+    global $pdo;
+    $message = 'That program was not found or still has scholars. Switch it off instead.';
+    try {
+        $stmt = $pdo->prepare(
+            'DELETE FROM scholarship_programs
+             WHERE id = ?
+               AND NOT EXISTS (SELECT 1 FROM scholars s WHERE s.program_id = scholarship_programs.id)'
+        );
+        $stmt->execute([$id]);
+    } catch (PDOException $e) {
+        if ($e->getCode() === '23000') {
+            return $message;
+        }
+        throw $e;
+    }
+    if ($stmt->rowCount() !== 1) {
+        return $message;
+    }
+    auditLog($adminId, 'program_deleted', "program $id");
+    return null;
+}
+
 enforceCsrfOnPost();
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     if (($_POST['action'] ?? '') === 'save') {
@@ -93,6 +119,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     } elseif (($_POST['action'] ?? '') === 'toggle') {
         $error = setProgramActive($user['id'], (int) ($_POST['program_id'] ?? 0), ($_POST['active'] ?? '') === '1');
         $_SESSION['flash'] = $error ? ['error', $error] : ['success', 'Program updated.'];
+    } elseif (($_POST['action'] ?? '') === 'delete') {
+        $error = deleteProgram($user['id'], (int) ($_POST['program_id'] ?? 0));
+        $_SESSION['flash'] = $error ? ['error', $error] : ['success', 'Program deleted.'];
     }
     redirect('admin/programs.php');
 }
@@ -139,7 +168,7 @@ require __DIR__ . '/../includes/admin_header.php';
 </section>
 
 <section class="content-panel panel-gap">
-    <div class="panel-header"><div><h2>All programs</h2><p>Switched-off programs cannot get new scholars</p></div></div>
+    <div class="panel-header"><div><h2>All programs</h2><p>Switched-off programs cannot get new scholars. Only a program with no scholars can be deleted</p></div></div>
     <?php if (!$programs): ?>
         <p>No programs yet. Add one above.</p>
     <?php else: ?>
@@ -165,6 +194,14 @@ require __DIR__ . '/../includes/admin_header.php';
                                 <input type="hidden" name="active" value="<?= $p['is_active'] ? 0 : 1 ?>">
                                 <button type="submit" class="btn btn-small"><?= $p['is_active'] ? 'Switch off' : 'Switch on' ?></button>
                             </form>
+                            <?php if ((int) $p['scholar_count'] === 0): ?>
+                            <form method="post" class="inline-form">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="program_id" value="<?= (int) $p['id'] ?>">
+                                <button type="submit" class="btn btn-small btn-danger" onclick="return confirm('Delete this program and its requirements? This cannot be undone.')">Delete</button>
+                            </form>
+                            <?php endif; ?>
                         </td>
                     </tr>
                     <?php endforeach; ?>

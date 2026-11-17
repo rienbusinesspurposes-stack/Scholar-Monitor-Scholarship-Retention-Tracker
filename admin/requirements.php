@@ -1,6 +1,7 @@
 <?php
 // Document requirements: what each program asks students to upload, and by when.
-// A requirement is switched off, never deleted, so documents students already uploaded for it are kept.
+// A requirement that has uploads is switched off, never deleted, so the documents students uploaded for it are kept.
+// One nobody has uploaded for can be deleted.
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/security.php';
 require_once __DIR__ . '/../includes/functions.php';
@@ -74,6 +75,24 @@ function setRequirementActive(int $adminId, int $programId, int $id, bool $activ
     return null;
 }
 
+// Deletes a requirement that has no uploads. One check-and-delete statement, so an upload that arrives at the
+// same moment cannot be cascaded away. Returns an error message, or null on success.
+function deleteRequirement(int $adminId, int $programId, int $id): ?string
+{
+    global $pdo;
+    $stmt = $pdo->prepare(
+        'DELETE FROM document_requirements
+         WHERE id = ? AND program_id = ?
+           AND NOT EXISTS (SELECT 1 FROM scholar_documents d WHERE d.requirement_id = document_requirements.id)'
+    );
+    $stmt->execute([$id, $programId]);
+    if ($stmt->rowCount() !== 1) {
+        return 'That requirement was not found or already has uploads. Switch it off instead.';
+    }
+    auditLog($adminId, 'requirement_deleted', "requirement $id, program $programId");
+    return null;
+}
+
 enforceCsrfOnPost();
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     $programId = (int) ($_POST['program_id'] ?? 0);
@@ -90,6 +109,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     } elseif (($_POST['action'] ?? '') === 'toggle') {
         $error = setRequirementActive($user['id'], $programId, (int) ($_POST['requirement_id'] ?? 0), ($_POST['active'] ?? '') === '1');
         $_SESSION['flash'] = $error ? ['error', $error] : ['success', 'Requirement updated.'];
+    } elseif (($_POST['action'] ?? '') === 'delete') {
+        $error = deleteRequirement($user['id'], $programId, (int) ($_POST['requirement_id'] ?? 0));
+        $_SESSION['flash'] = $error ? ['error', $error] : ['success', 'Requirement deleted.'];
     }
     redirect('admin/requirements.php?program=' . $programId);
 }
@@ -164,7 +186,7 @@ require __DIR__ . '/../includes/admin_header.php';
 </section>
 
 <section class="content-panel panel-gap">
-    <div class="panel-header"><div><h2>Requirements</h2><p>Switched-off ones are kept with their uploads</p></div></div>
+    <div class="panel-header"><div><h2>Requirements</h2><p>Switched-off ones are kept with their uploads. Only a requirement with no uploads can be deleted</p></div></div>
     <?php if (!$requirements): ?>
         <p>This program has no requirements yet.</p>
     <?php else: ?>
@@ -190,6 +212,15 @@ require __DIR__ . '/../includes/admin_header.php';
                                 <input type="hidden" name="active" value="<?= $r['is_active'] ? 0 : 1 ?>">
                                 <button type="submit" class="btn btn-small"><?= $r['is_active'] ? 'Switch off' : 'Switch on' ?></button>
                             </form>
+                            <?php if ((int) $r['uploads'] === 0): ?>
+                            <form method="post" class="inline-form">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="program_id" value="<?= $programId ?>">
+                                <input type="hidden" name="requirement_id" value="<?= (int) $r['id'] ?>">
+                                <button type="submit" class="btn btn-small btn-danger" onclick="return confirm('Delete this requirement? This cannot be undone.')">Delete</button>
+                            </form>
+                            <?php endif; ?>
                         </td>
                     </tr>
                     <?php endforeach; ?>
