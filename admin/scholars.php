@@ -85,6 +85,28 @@ function verifyScholar(int $adminId, int $scholarId): ?string
     return null;
 }
 
+// Builds the WHERE part of the scholar list from the search text and the two drop-downs.
+// Returns [sql, params]. The text is matched anywhere in name, student number or email; ! escapes % and _.
+function scholarFilter(string $q, string $status, int $programId): array
+{
+    $where = [];
+    $params = [];
+    if ($q !== '') {
+        $like = '%' . str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $q) . '%';
+        $where[] = "(u.full_name LIKE ? ESCAPE '!' OR sc.student_number LIKE ? ESCAPE '!' OR u.email LIKE ? ESCAPE '!')";
+        array_push($params, $like, $like, $like);
+    }
+    if ($status !== '') {
+        $where[] = 'sc.status = ?';
+        $params[] = $status;
+    }
+    if ($programId > 0) {
+        $where[] = 'sc.program_id = ?';
+        $params[] = $programId;
+    }
+    return [$where ? 'WHERE ' . implode(' AND ', $where) : '', $params];
+}
+
 enforceCsrfOnPost();
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     $action = $_POST['action'] ?? '';
@@ -119,13 +141,26 @@ $activePrograms = $pdo->query(
     'SELECT id, name FROM scholarship_programs WHERE is_active = 1 ORDER BY name'
 )->fetchAll();
 
-$allScholars = $pdo->query(
+$statusChoices = ['Pending', 'Active', 'AtRisk', 'Ineligible', 'Ended'];
+$q = is_string($_GET['q'] ?? null) ? trim(mb_substr($_GET['q'], 0, 100)) : '';
+$status = in_array($_GET['status'] ?? '', $statusChoices, true) ? $_GET['status'] : '';
+$programId = (int) ($_GET['program'] ?? 0);
+$filtering = $q !== '' || $status !== '' || $programId > 0;
+
+[$where, $params] = scholarFilter($q, $status, $programId);
+$stmt = $pdo->prepare(
     "SELECT sc.id, sc.student_number, sc.status, u.full_name, p.name AS program_name
      FROM scholars sc
      JOIN users u ON u.id = sc.user_id
      JOIN scholarship_programs p ON p.id = sc.program_id
+     $where
      ORDER BY FIELD(sc.status, 'Pending', 'AtRisk', 'Ineligible', 'Active', 'Ended'), u.full_name"
-)->fetchAll();
+);
+$stmt->execute($params);
+$allScholars = $stmt->fetchAll();
+
+// Every program, including switched-off ones, because old scholars can still belong to them.
+$filterPrograms = $pdo->query('SELECT id, name FROM scholarship_programs ORDER BY name')->fetchAll();
 
 require __DIR__ . '/../includes/admin_header.php';
 ?>
@@ -168,8 +203,31 @@ require __DIR__ . '/../includes/admin_header.php';
 
 <section class="content-panel panel-gap">
     <div class="panel-header"><div><h2>All scholars</h2><p>Pending first</p></div></div>
+    <form method="get" class="stack-form">
+        <label for="q">Search name, student number or email</label>
+        <input type="search" name="q" id="q" maxlength="100" value="<?= e($q) ?>">
+
+        <label for="status">Status</label>
+        <select name="status" id="status">
+            <option value="">All statuses</option>
+            <?php foreach ($statusChoices as $s): ?>
+                <option value="<?= $s ?>"<?= $s === $status ? ' selected' : '' ?>><?= e(STATUS_LABEL[$s] ?? $s) ?></option>
+            <?php endforeach; ?>
+        </select>
+
+        <label for="program">Program</label>
+        <select name="program" id="program">
+            <option value="">All programs</option>
+            <?php foreach ($filterPrograms as $p): ?>
+                <option value="<?= (int) $p['id'] ?>"<?= (int) $p['id'] === $programId ? ' selected' : '' ?>><?= e($p['name']) ?></option>
+            <?php endforeach; ?>
+        </select>
+
+        <button type="submit" class="btn">Filter</button>
+        <?php if ($filtering): ?><a href="scholars.php" class="card-link">Clear</a><?php endif; ?>
+    </form>
     <?php if (!$allScholars): ?>
-        <p>No scholars yet.</p>
+        <p><?= $filtering ? 'No scholars match that search.' : 'No scholars yet.' ?></p>
     <?php else: ?>
         <div class="table-wrap">
             <table class="data-table">

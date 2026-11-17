@@ -76,6 +76,24 @@ function reviewDocument(int $adminId, int $docId, string $storedName, string $de
     return null;
 }
 
+// Builds the WHERE part of the document list from the search text and the status drop-down.
+// Returns [sql, params]. The text is matched anywhere in the student's name or number, the requirement or the file name.
+function documentFilter(string $q, string $status): array
+{
+    $where = [];
+    $params = [];
+    if ($q !== '') {
+        $like = '%' . str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $q) . '%';
+        $where[] = "(u.full_name LIKE ? ESCAPE '!' OR sc.student_number LIKE ? ESCAPE '!' OR r.name LIKE ? ESCAPE '!' OR d.original_name LIKE ? ESCAPE '!')";
+        array_push($params, $like, $like, $like, $like);
+    }
+    if ($status !== '') {
+        $where[] = 'd.status = ?';
+        $params[] = $status;
+    }
+    return [$where ? 'WHERE ' . implode(' AND ', $where) : '', $params];
+}
+
 enforceCsrfOnPost();
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     $error = reviewDocument(
@@ -92,17 +110,27 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 }
 
 // Waiting for review first (oldest first so nobody waits forever), then the rest, newest decision first.
-$docs = $pdo->query(
+$statusChoices = ['Submitted', 'Approved', 'Rejected'];
+$q = is_string($_GET['q'] ?? null) ? trim(mb_substr($_GET['q'], 0, 100)) : '';
+$status = in_array($_GET['status'] ?? '', $statusChoices, true) ? $_GET['status'] : '';
+$filtering = $q !== '' || $status !== '';
+
+[$where, $params] = documentFilter($q, $status);
+$stmt = $pdo->prepare(
     "SELECT d.id, d.stored_name, d.original_name, d.status, d.note, d.submitted_at, d.reviewed_at,
             u.full_name, sc.student_number, r.name AS requirement_name
      FROM scholar_documents d
      JOIN scholars sc ON sc.id = d.scholar_id
      JOIN users u ON u.id = sc.user_id
      JOIN document_requirements r ON r.id = d.requirement_id
+     $where
      ORDER BY CASE d.status WHEN 'Submitted' THEN 0 ELSE 1 END, d.submitted_at ASC, d.id ASC
      LIMIT 200"
-)->fetchAll();
-$waiting = count(array_filter($docs, fn($d) => $d['status'] === 'Submitted'));
+);
+$stmt->execute($params);
+$docs = $stmt->fetchAll();
+// Counted separately so the number stays true while a search is hiding some rows.
+$waiting = (int) $pdo->query("SELECT COUNT(*) FROM scholar_documents WHERE status = 'Submitted'")->fetchColumn();
 
 require __DIR__ . '/../includes/admin_header.php';
 ?>
@@ -112,8 +140,24 @@ require __DIR__ . '/../includes/admin_header.php';
         <div><h2>Uploaded documents</h2><p><?= $waiting > 0 ? $waiting . ' waiting for review' : 'Nothing is waiting for review' ?></p></div>
     </div>
 
+    <form method="get" class="stack-form">
+        <label for="q">Search student, student number, requirement or file name</label>
+        <input type="search" name="q" id="q" maxlength="100" value="<?= e($q) ?>">
+
+        <label for="status">Status</label>
+        <select name="status" id="status">
+            <option value="">All statuses</option>
+            <?php foreach ($statusChoices as $s): ?>
+                <option value="<?= $s ?>"<?= $s === $status ? ' selected' : '' ?>><?= $s ?></option>
+            <?php endforeach; ?>
+        </select>
+
+        <button type="submit" class="btn">Filter</button>
+        <?php if ($filtering): ?><a href="documents.php" class="card-link">Clear</a><?php endif; ?>
+    </form>
+
     <?php if (!$docs): ?>
-        <p>No documents have been uploaded yet.</p>
+        <p><?= $filtering ? 'No documents match that search.' : 'No documents have been uploaded yet.' ?></p>
     <?php else: ?>
         <?php foreach ($docs as $d):
             $pill = match ($d['status']) { 'Approved' => 'is-done', 'Rejected' => 'is-missing', default => 'is-pending' };

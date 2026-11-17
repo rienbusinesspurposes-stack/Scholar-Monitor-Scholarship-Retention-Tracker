@@ -82,6 +82,28 @@ function setAccountActive(int $actorId, int $userId, bool $active): ?string
     return null;
 }
 
+// Builds the WHERE part of the account list from the search text and the two drop-downs.
+// Returns [sql, params]. The text is matched anywhere in name, username or email; ! escapes % and _.
+function accountFilter(string $q, string $role, string $state): array
+{
+    $where = [];
+    $params = [];
+    if ($q !== '') {
+        $like = '%' . str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $q) . '%';
+        $where[] = "(full_name LIKE ? ESCAPE '!' OR username LIKE ? ESCAPE '!' OR email LIKE ? ESCAPE '!')";
+        array_push($params, $like, $like, $like);
+    }
+    if ($role !== '') {
+        $where[] = 'role = ?';
+        $params[] = $role;
+    }
+    if ($state !== '') {
+        $where[] = 'is_active = ?';
+        $params[] = $state === 'on' ? 1 : 0;
+    }
+    return [$where ? 'WHERE ' . implode(' AND ', $where) : '', $params];
+}
+
 enforceCsrfOnPost();
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     $action = $_POST['action'] ?? '';
@@ -105,10 +127,19 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     redirect('super_admin/users.php');
 }
 
-$accounts = $pdo->query(
+$q = is_string($_GET['q'] ?? null) ? trim(mb_substr($_GET['q'], 0, 100)) : '';
+$roleFilter = in_array($_GET['role'] ?? '', ROLE_CHOICES, true) ? $_GET['role'] : '';
+$state = in_array($_GET['state'] ?? '', ['on', 'off'], true) ? $_GET['state'] : '';
+$filtering = $q !== '' || $roleFilter !== '' || $state !== '';
+
+[$where, $params] = accountFilter($q, $roleFilter, $state);
+$stmt = $pdo->prepare(
     "SELECT id, username, email, full_name, role, is_active FROM users
+     $where
      ORDER BY FIELD(role, 'SuperAdmin', 'Admin', 'User'), full_name LIMIT 300"
-)->fetchAll();
+);
+$stmt->execute($params);
+$accounts = $stmt->fetchAll();
 
 require __DIR__ . '/../includes/admin_header.php';
 ?>
@@ -144,6 +175,31 @@ require __DIR__ . '/../includes/admin_header.php';
 
 <section class="content-panel panel-gap">
     <div class="panel-header"><div><h2>All accounts</h2><p>Super Admins first, then Admins, then students</p></div></div>
+    <form method="get" class="stack-form">
+        <label for="q">Search name, username or email</label>
+        <input type="search" name="q" id="q" maxlength="100" value="<?= e($q) ?>">
+
+        <label for="role_filter">Role</label>
+        <select name="role" id="role_filter">
+            <option value="">All roles</option>
+            <?php foreach (ROLE_CHOICES as $r): ?>
+                <option value="<?= $r ?>"<?= $r === $roleFilter ? ' selected' : '' ?>><?= $r === 'SuperAdmin' ? 'Super Admin' : $r ?></option>
+            <?php endforeach; ?>
+        </select>
+
+        <label for="state">Account</label>
+        <select name="state" id="state">
+            <option value="">Active and switched off</option>
+            <option value="on"<?= $state === 'on' ? ' selected' : '' ?>>Active only</option>
+            <option value="off"<?= $state === 'off' ? ' selected' : '' ?>>Switched off only</option>
+        </select>
+
+        <button type="submit" class="btn">Filter</button>
+        <?php if ($filtering): ?><a href="users.php" class="card-link">Clear</a><?php endif; ?>
+    </form>
+    <?php if (!$accounts): ?>
+        <p>No accounts match that search.</p>
+    <?php else: ?>
     <div class="table-wrap">
         <table class="data-table">
             <thead>
@@ -190,6 +246,7 @@ require __DIR__ . '/../includes/admin_header.php';
             </tbody>
         </table>
     </div>
+    <?php endif; ?>
 </section>
 
 <?php require __DIR__ . '/../includes/admin_footer.php'; ?>
