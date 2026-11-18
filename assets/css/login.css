@@ -1,4 +1,3 @@
-
 /* =====================================
    MCC GRANTRACK LOGIN DESIGN
 ===================================== */
@@ -219,17 +218,6 @@ body {
     font-size: 13px;
 }
 
-.remember-me {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    cursor: pointer;
-}
-
-.remember-me input {
-    accent-color: var(--pastel);
-}
-
 .login-options a {
     color: var(--white);
     text-decoration: none;
@@ -272,109 +260,6 @@ body {
 
 
 /* =====================================
-   CUSTOM FORGOT PASSWORD MODAL
-===================================== */
-
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 30, 50, 0.55);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    z-index: 9999;
-    backdrop-filter: blur(4px);
-}
-
-.modal-overlay.show {
-    display: flex;
-}
-
-.modal-box {
-    position: relative;
-    width: 100%;
-    max-width: 380px;
-    background: #ffffff;
-    padding: 35px 30px;
-    border-radius: 18px;
-    text-align: center;
-    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.18);
-    animation: modalAppear 0.25s ease;
-}
-
-@keyframes modalAppear {
-    from {
-        opacity: 0;
-        transform: translateY(15px) scale(0.96);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-.modal-close {
-    position: absolute;
-    top: 12px;
-    right: 16px;
-    border: none;
-    background: none;
-    font-size: 25px;
-    color: #8994a3;
-    cursor: pointer;
-}
-
-.modal-close:hover {
-    color: #142b4a;
-}
-
-.modal-icon {
-    width: 58px;
-    height: 58px;
-    background: #B9B6AD;
-    color: #2D4E71;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    font-weight: 800;
-    margin: 0 auto 20px;
-}
-
-.modal-box h2 {
-    color: #142b4a;
-    font-size: 22px;
-    margin-bottom: 12px;
-}
-
-.modal-box p {
-    color: #7b8797;
-    font-size: 14px;
-    line-height: 1.7;
-    margin-bottom: 25px;
-}
-
-.modal-button {
-    width: 100%;
-    padding: 13px;
-    border: none;
-    border-radius: 9px;
-    background: #2D4E71;
-    color: white;
-    font-size: 14px;
-    font-weight: 800;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.modal-button:hover {
-    background: #AABED6;
-}
-
-/* =====================================
    ERROR MESSAGE
 ===================================== */
 
@@ -405,7 +290,7 @@ body {
 .login-divider::after {
     content: "";
     height: 1px;
-    background: var(--border);
+    background: var(--charcoal);
     flex: 1;
 }
 

@@ -1,4 +1,4 @@
-// Navigation: sidebar, profile menu, logout
+// Navigation: sidebar, logout
 
 (function () {
     "use strict";
@@ -11,7 +11,6 @@
 
         highlightCurrentPage(sidebar);
         setupSidebarToggle(sidebar);
-        setupProfileMenu();
         setupLogoutModal();
     });
 
@@ -86,32 +85,6 @@
         });
 
         setState(!isMobile());
-    }
-
-    // Profile dropdown
-    function setupProfileMenu() {
-        var menu = document.querySelector(".profile-menu");
-        if (!menu) return;
-
-        var trigger = menu.querySelector(".profile-trigger");
-
-        function setOpen(open) {
-            menu.classList.toggle("is-open", open);
-            trigger.setAttribute("aria-expanded", String(open));
-        }
-
-        trigger.addEventListener("click", function (event) {
-            event.stopPropagation();
-            setOpen(!menu.classList.contains("is-open"));
-        });
-
-        document.addEventListener("click", function (event) {
-            if (!menu.contains(event.target)) setOpen(false);
-        });
-
-        document.addEventListener("keydown", function (event) {
-            if (event.key === "Escape") setOpen(false);
-        });
     }
 
     // Logout modal (any element with data-logout)
